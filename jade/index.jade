@@ -1,0 +1,74 @@
+include mixins.jade
+
+- var year = 2015;
+- var cost = 50;
+-
+  var links = {
+    'chrome': 'https://www.google.com/intl/en/chrome/browser/',
+    'ff': 'http://www.mozilla.org/en-US/firefox/new/',
+    'ie': 'http://windows.microsoft.com/en-us/internet-explorer/download-ie',
+  }
+
+doctype html
+
+html
+  head
+    title Punjabi Class Registration
+    link(rel='stylesheet', href='style.css')
+  body
+    h1 #{year} - #{year + 1} Punjabi Class Registration
+    p.
+      #[b NOTE:] Online registration will only work with the latest versions of
+      #[a(href='#{links.chrome}') Chrome], #[a(href='#{links.ff}') Firefox], or
+      #[a(href='#{links.ie}') Internet Explorer].
+      If the form does not load, please try updating your browser.
+
+    #errors
+
+    label(for='numentries') Number of Students:
+    select#numentries
+      option(value='0') Please choose one
+      option(value='1') 1
+      option(value='2') 2
+      option(value='3') 3
+      option(value='4') 4
+
+    form
+      +student(1)
+      +student(2)
+      +student(3)
+      +student(4)
+
+      hr
+
+      #father-name
+        h3 Father's Name
+        +full-name
+      #mother-name
+        h3 Mother's Name
+        +full-name
+
+      hr
+
+      +address
+
+      hr
+
+      | Primary Email: #[+email#primary-email(true)]
+
+      hr
+
+      | Secondary Email (optional): #[+email#secondary-email(true)]
+
+      hr
+
+      +phone-number
+
+      hr
+
+      p.
+        The payment of the #[span#cost $#{cost}] (total) school fee can be given to Kanwerdip Singh
+        in person.
+
+      button#submit.submit Submit
+      img#loading(src='loading.gif')

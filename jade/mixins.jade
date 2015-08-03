@@ -1,0 +1,40 @@
+mixin student(id)
+  div(id='student-#{id}')
+    h3 Student #{id}
+    +full-name(true)
+    +class-selector
+
+mixin class-selector
+  label Class:
+    select(name='class', id='#{id}')
+      option(value='invalid', selected='selected') Please select a grade
+      option(value='') I don't know
+      option(value='Pre-Kindergarten') Pre-Kindergarten
+      option(value='Kindergarten') Kindergarten
+      option(value='Grade 1') Grade 1
+      option(value='Grade 2') Grade 2
+      option(value='Grade 3') Grade 3
+      option(value='Grade 4') Grade 4
+      option(value='Grade 5') Grade 5
+
+mixin full-name(middle)
+  .full-name
+    label First name
+      input(type=text name="first-name")
+    if middle === true
+      label Middle name (optional)
+        input(type=text name="middle-name")
+    label Last name
+      input(type=text name="last-name")
+
+mixin address
+  | address
+
+mixin email
+  | email
+
+mixin phone-number
+  | number
+
+mixin date
+  | date
