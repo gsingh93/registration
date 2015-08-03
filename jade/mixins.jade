@@ -1,3 +1,5 @@
+include date.jade
+
 mixin text-field(label, name, placeholder)
   li
     label
@@ -6,10 +8,17 @@ mixin text-field(label, name, placeholder)
 
 
 mixin student(id)
-  div(id='student-#{id}', class='hide')
+  div.hide(id='student-#{id}')
     h3 Student #{id}
     +full-name(true)
     +class-selector
+    br
+    +date('Birthday')
+    br
+    label Male
+      input(type='radio', name='gender', value='male')
+    label Female
+      input(type='radio', name='gender', value='female')
 
 mixin class-selector
   label Class:
@@ -53,9 +62,6 @@ mixin phone-number(type)
     else
       - var label = type + ' phone number';
     +text-field(label, 'phone-number', 'xxx-xxx-xxxx')
-
-mixin date
-  | date
 
 mixin state-selector
   | state

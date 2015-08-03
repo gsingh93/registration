@@ -21,7 +21,7 @@ $(OUT_DIR):
 $(OUT_DIR)/loading.gif: images/loading.gif
 	cp $< $(OUT_DIR)
 
-$(OUT_DIR)/%.html: jade/%.jade jade/mixins.jade
+$(OUT_DIR)/%.html: jade/%.jade jade/mixins.jade jade/date.jade
 	jade $(JADE_FLAGS) $< -o $(OUT_DIR)
 
 $(OUT_DIR)/style.css: css/*
