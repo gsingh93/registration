@@ -1,0 +1,19 @@
+{
+  "name": "registration",
+  "version": "0.0.0",
+  "authors": [
+    "Gulshan Singh <gsingh2011@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "sprintf": "~1.0.3",
+    "assert": "~0.1.0"
+  }
+}
