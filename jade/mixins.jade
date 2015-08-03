@@ -9,21 +9,26 @@ mixin text-field(label, name, placeholder)
 
 
 mixin student(id)
-  div.hide(id='student-#{id}')
+  .hide
     h3 Student #{id}
-    +full-name(true)
-    +class-selector
-    br
-    +date('Birthday')
-    br
-    label Male
+    .section(id='student-#{id}')
+      +full-name(true)
+      +class-selector
+      +date('Birthday')
+      +gender
+
+mixin gender
+  label.field
+    span.label-text Gender:
+    label(style='margin-right: 10px;') Male
       input(type='radio', name='gender', value='male')
     label Female
       input(type='radio', name='gender', value='female')
 
 mixin class-selector
-  label Class:
-    select(name='class', id='#{id}')
+  label.field
+    span.label-text Class:
+    select(name='class')
       option(value='invalid', selected='selected') Please select a grade
       option(value='') I don't know
       option(value='Pre-Kindergarten') Pre-Kindergarten
@@ -42,7 +47,7 @@ mixin full-name(middle)
     +text-field('Last name', 'last-name')
 
 mixin address
-  ul.inputs
+  .section: ul.inputs
     +text-field('Street', 'street')
     +text-field('City', 'city')
     li
@@ -52,12 +57,12 @@ mixin address
     +text-field('Zip Code', 'zip-code')
 
 mixin email
-  ul.inputs
+  .section: ul.inputs
     +text-field('Email', 'email')
     +text-field('Confirm email', 'confirm-email')
 
 mixin phone-number(type)
-  ul.inputs
+  .section: ul.inputs
     if type === undefined
       - var label = 'Phone number';
     else
