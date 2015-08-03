@@ -11,7 +11,7 @@ else
 	LINT_FLAGS := --quiet --ignore=compatible-vendor-prefixes,box-model,gradients
 endif
 
-OUT_FILES := index.html style.css loading.gif main.js
+OUT_FILES := index.html style.css loading.gif main.js assert.js
 
 all: $(OUT_DIR) $(OUT_FILES:%=$(OUT_DIR)/%)
 
@@ -23,6 +23,9 @@ $(OUT_DIR)/loading.gif: images/loading.gif
 
 $(OUT_DIR)/%.html: jade/%.jade jade/mixins.jade jade/date.jade jade/state.jade
 	jade $(JADE_FLAGS) $< -o $(OUT_DIR)
+
+$(OUT_DIR)/assert.js: script/assert.js
+	cp $< $@
 
 $(OUT_DIR)/%.js: script/%.ts
 	tsc $< --out $@
