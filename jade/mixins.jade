@@ -1,3 +1,10 @@
+mixin text-field(label, name)
+  li
+    label
+      span.label-text #{label}:
+      input(type='text', name='#{name}')
+
+
 mixin student(id)
   div(id='student-#{id}', class='hide')
     h3 Student #{id}
@@ -19,41 +26,25 @@ mixin class-selector
 
 mixin full-name(middle)
   ul.inputs
-    li
-      label
-        span.label-text First name:
-        input(type='text' name="first-name")
-    li
-      if middle === true
-        label
-          span.label-text Middle name (optional):
-          input(type='text' name="middle-name")
-    li
-      label
-        span.label-text Last name:
-        input(type='text' name="last-name")
+    +text-field('First name', 'first-name')
+    if middle === true
+      +text-field('Middle name (optional)', 'middle-name')
+    +text-field('Last name', 'last-name')
 
 mixin address
   ul.inputs
-    li
-      label
-        span.label-text Street:
-        input(type='text', name='street')
-    li
-      label
-        span.label-text City:
-        input(type='text', name='city')
+    +text-field('Street', 'street')
+    +text-field('City', 'city')
     li
       label
         span.label-text State:
         +state-selector
-    li
-      label
-        span.label-text Zip Code:
-        input(type='text', name='zipcode')
+    +text-field('Zip Code', 'zip-code')
 
 mixin email
-  | email
+  ul.inputs
+    +text-field('Email', 'email')
+    +text-field('Confirm email', 'confirm-email')
 
 mixin phone-number
   | number
