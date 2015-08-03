@@ -18,17 +18,39 @@ mixin class-selector
       option(value='Grade 5') Grade 5
 
 mixin full-name(middle)
-  .full-name
-    label First name
-      input(type='text' name="first-name")
-    if middle === true
-      label Middle name (optional)
-        input(type='text' name="middle-name")
-    label Last name
-      input(type='text' name="last-name")
+  ul.inputs
+    li
+      label
+        span.label-text First name:
+        input(type='text' name="first-name")
+    li
+      if middle === true
+        label
+          span.label-text Middle name (optional):
+          input(type='text' name="middle-name")
+    li
+      label
+        span.label-text Last name:
+        input(type='text' name="last-name")
 
 mixin address
-  | address
+  ul.inputs
+    li
+      label
+        span.label-text Street:
+        input(type='text', name='street')
+    li
+      label
+        span.label-text City:
+        input(type='text', name='city')
+    li
+      label
+        span.label-text State:
+        +state-selector
+    li
+      label
+        span.label-text Zip Code:
+        input(type='text', name='zipcode')
 
 mixin email
   | email
@@ -38,3 +60,6 @@ mixin phone-number
 
 mixin date
   | date
+
+mixin state-selector
+  | state

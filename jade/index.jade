@@ -54,11 +54,15 @@ html
 
       hr
 
-      | Primary Email: #[+email#primary-email(true)]
+      #primary-email
+        h3 Primary Email
+        +email(true)
 
       hr
 
-      | Secondary Email (optional): #[+email#secondary-email(true)]
+      #secondary-email
+        h3 Secondary Email
+        +email(true)
 
       hr
 
