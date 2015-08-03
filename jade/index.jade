@@ -23,7 +23,7 @@ html
       #[a(href='#{links.ie}') Internet Explorer].
       If the form does not load, please try updating your browser.
 
-    #errors
+    .errors
 
     label(for='numentries') Number of Students:
     select#numentries
@@ -71,4 +71,4 @@ html
         in person.
 
       button#submit.submit Submit
-      img#loading(src='loading.gif')
+      img#loading.hide(src='loading.gif')

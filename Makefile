@@ -1,13 +1,14 @@
+SHELL := /bin/bash
+
 OUT_DIR := public
 
 RELEASE ?= 0
 ifeq ($(RELEASE), 1)
 	JADE_FLAGS := --no-debug
-	LINT_FLAGS :=
+	LINT_FLAGS := --quiet
 else
 	JADE_FLAGS := --pretty
-	LINT_FLAGS := --ignore=compatible-vendor-prefixes,box-sizing
-#	LINT_FLAGS :=
+	LINT_FLAGS := --quiet --ignore=compatible-vendor-prefixes,box-model,gradients
 endif
 
 OUT_FILES := index.html style.css loading.gif
@@ -25,7 +26,7 @@ $(OUT_DIR)/%.html: jade/%.jade jade/mixins.jade
 
 $(OUT_DIR)/style.css: css/*
 	lessc css/style.less $@
-	csslint $(LINT_FLAGS) $@
+	csslint $(LINT_FLAGS) <(sed -e '1,/CSS START/d' $@)
 ifeq ($(RELEASE), 1)
 	cleancss --s0 $@ -o $@
 endif

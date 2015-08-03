@@ -1,5 +1,5 @@
 mixin student(id)
-  div(id='student-#{id}')
+  div(id='student-#{id}', class='hide')
     h3 Student #{id}
     +full-name(true)
     +class-selector
@@ -20,12 +20,12 @@ mixin class-selector
 mixin full-name(middle)
   .full-name
     label First name
-      input(type=text name="first-name")
+      input(type='text' name="first-name")
     if middle === true
       label Middle name (optional)
-        input(type=text name="middle-name")
+        input(type='text' name="middle-name")
     label Last name
-      input(type=text name="last-name")
+      input(type='text' name="last-name")
 
 mixin address
   | address
