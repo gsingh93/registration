@@ -9,9 +9,9 @@ mixin text-field(label, name, placeholder)
 
 
 mixin student(id)
-  .hide
+  .hide(id='student-#{id}')
     h3 Student #{id}
-    .section(id='student-#{id}')
+    .section
       +full-name(true)
       +class-selector
       +date('Birthday')
