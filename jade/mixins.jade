@@ -1,8 +1,8 @@
-mixin text-field(label, name)
+mixin text-field(label, name, placeholder)
   li
     label
       span.label-text #{label}:
-      input(type='text', name='#{name}')
+      input(type='text', name='#{name}', placeholder=placeholder)
 
 
 mixin student(id)
@@ -46,8 +46,13 @@ mixin email
     +text-field('Email', 'email')
     +text-field('Confirm email', 'confirm-email')
 
-mixin phone-number
-  | number
+mixin phone-number(type)
+  ul.inputs
+    if type === undefined
+      - var label = 'Phone number';
+    else
+      - var label = type + ' phone number';
+    +text-field(label, 'phone-number', 'xxx-xxx-xxxx')
 
 mixin date
   | date
