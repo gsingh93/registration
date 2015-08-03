@@ -31,7 +31,7 @@ $(OUT_DIR)/sprintf.js: bower_components/sprintf/dist/sprintf.min.js
 	cp $< $@
 
 $(OUT_DIR)/%.js: script/%.ts
-	tsc $< --out $@
+	tsc -t ES5 $< --out $@
 
 $(OUT_DIR)/style.css: css/*
 	lessc css/style.less $@

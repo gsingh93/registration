@@ -10,6 +10,9 @@
     },
     "assert/assert.d.ts": {
       "commit": "7c27233ae47768442b9b0a40d7f03fadf593fad2"
+    },
+    "sprintf/sprintf.d.ts": {
+      "commit": "7c27233ae47768442b9b0a40d7f03fadf593fad2"
     }
   }
 }
