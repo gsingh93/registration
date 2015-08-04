@@ -68,11 +68,11 @@ function capitalize(s: string): string {
     if (s.length == 0) {
         return "";
     }
-    return s.charAt(0).toUpperCase() + s.slice(1);
+    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 }
 
 function capitalize_words(s: string): string {
-    return s; // TODO
+    return s.split(' ').map(function(w) { return capitalize(w); }).join(' ');
 }
 
 class FullName {
