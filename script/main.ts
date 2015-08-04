@@ -10,15 +10,33 @@ var successfulSubmissions = 0;
 // TODO: Figure out how to import this function
 declare function sprintf(fmt: string, ...args: any[]): string;
 
+interface JQuery {
+    assertOne(): any;
+    assertOneOrMore(): any;
+    assertSize(num: number): any;
+}
+
 function getStudents(): JQuery {
     var $students = $('div[id^=student-]');
     assert.equal($students.length, 4);
     return $students;
 }
 
+function getNumEntries($numEntries?: JQuery): number {
+    if (!$numEntries) {
+        var $numEntries = $('#numentries');
+    }
+    return toNum($numEntries.find('option:selected').val());
+}
+
+function toNum(val): number {
+    var num = parseInt(val, 10);
+    assert(!isNaN(num));
+    return num;
+}
+
 function numEntriesChanged($numEntries: JQuery) {
-    var val = parseInt($numEntries.find('option:selected').val(), 10);
-    assert(!isNaN(val));
+    var val = getNumEntries($numEntries);
 
     var $students = getStudents();
     for (var i = 0; i < 4; i++) {
@@ -39,11 +57,14 @@ function numEntriesChanged($numEntries: JQuery) {
     }
 
     var $cost = $('#cost');
-    var cost = parseInt($cost.text(), 10);
-    assert(!isNaN(cost));
+    var cost = toNum($cost.text());
 
     var totalCost = val * cost;
     $cost.text(totalCost);
+}
+
+function capitalize(s: string): string {
+    return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 class FullName {
@@ -52,14 +73,19 @@ class FullName {
     lastName: string;
 
     constructor(id) {
-        var obj = $('#' + id);
+        var obj = $('#' + id).assertOne();
         this.firstName = obj.find('input[name=first-name]').val();
         this.middleName = obj.find('input[name=middle-name]').val();
         this.lastName = obj.find('input[name=last-name]').val();
     }
 
     get fullName(): string {
-        return this.firstName + ' ' + this.middleName + ' ' + this.lastName;
+        var name = capitalize(this.firstName) + ' ';
+        if (this.middleName != undefined && this.middleName != "") {
+            name += capitalize(this.middleName) + ' ';
+        }
+        name += capitalize(this.lastName);
+        return name;
     }
 
     check(errors: string[]): void {
@@ -137,6 +163,7 @@ function handleSubmit(e) {
         + '"phoneNumber": "%s",'
         + '"name": "%s",'
         + '"class": "%s",'
+        + '"birthday": "%s",'
         + '"gender": "%s",'
         + '"mother": "%s",'
         + '"father": "%s"'
@@ -154,8 +181,7 @@ function handleSubmit(e) {
 
     var errors: string[] = [];
 
-    var numEntries = parseInt($('#numentries option:selected').val(), 10);
-    assert(!isNaN(numEntries));
+    var numEntries = getNumEntries();
     assert.notEqual(numEntries, 0);
     for (var i = 0; i < numEntries; i++) {
         students[i].check(errors);
@@ -188,30 +214,30 @@ function handleSubmit(e) {
                                student.birthday,
                                student.gender,
                                mother.fullName,
-                               father.fullName);
+                               mother.fullName);
         console.log(jsonData);
-        $.ajax({
-            url: url,
-            method: 'POST',
-            data: jsonData,
-            contentType: 'application/json',
-            headers: {
-                "X-Parse-Application-Id": "Ok0XAGbx2gAEkRKbgMCb4PJ1GDrmWco7bTzuvXZQ",
-                "X-Parse-REST-API-Key": "kl750bfRK2bF7fHKpmvEwhV9nePqXi81Ad4At8Xp"
-            },
-            complete: function(response, textStatus) {
-                if (response.readyState == XMLHttpRequest.DONE && response.status == 201) {
-                    successfulSubmissions++;
-                    if (successfulSubmissions == numEntries) {
-                        window.location.href = successUrl;
-                    }
-                } else {
-                    console.log('Status: ' + response.status.toString());
-                    console.log('Response: ' + response.responseText);
-                    alert('An error occurred, please try again.');
-                }
-            },
-        });
+        // $.ajax({
+        //     url: url,
+        //     method: 'POST',
+        //     data: jsonData,
+        //     contentType: 'application/json',
+        //     headers: {
+        //         "X-Parse-Application-Id": "Ok0XAGbx2gAEkRKbgMCb4PJ1GDrmWco7bTzuvXZQ",
+        //         "X-Parse-REST-API-Key": "kl750bfRK2bF7fHKpmvEwhV9nePqXi81Ad4At8Xp"
+        //     },
+        //     complete: function(response, textStatus) {
+        //         if (response.readyState == XMLHttpRequest.DONE && response.status == 201) {
+        //             successfulSubmissions++;
+        //             if (successfulSubmissions == numEntries) {
+        //                 window.location.href = successUrl;
+        //             }
+        //         } else {
+        //             console.log('Status: ' + response.status.toString());
+        //             console.log('Response: ' + response.responseText);
+        //             alert('An error occurred, please try again.');
+        //         }
+        //     },
+        // });
     }
 }
 
@@ -220,6 +246,8 @@ function displayErrors(errors: string[]): void {
 }
 
 $(function() {
+    addAssertFunctions();
+
     getStudents().each(function(index, elt) {
         $(elt).hide();
     });
@@ -232,3 +260,21 @@ $(function() {
 
     $('#submit').click(handleSubmit);
 });
+
+function addAssertFunctions() {
+    $.fn.assertSize = function(size) {
+        if (this.length != size) {
+            throw "Expected " + size + " elements, but selector '" + this.selector + "' found "
+                + this.length + ".";
+        }
+        return this;
+    };
+    $.fn.assertOne = function() { return this.assertSize(1); };
+    $.fn.assertOneOrMore = function() {
+        if (this.length <= 1) {
+            throw "Expected one or more elements, but selector '" + this.selector + "' found "
+                + this.length + ".";
+        }
+        return this;
+    }
+}
