@@ -200,5 +200,5 @@ function toNum(val): number {
 }
 
 function displayErrors(errors: string[]): void {
-
+    console.log(errors);
 }

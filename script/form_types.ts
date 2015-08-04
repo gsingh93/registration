@@ -9,6 +9,15 @@ function capitalize_words(s: string): string {
     return s.split(' ').map(function(w) { return capitalize(w); }).join(' ');
 }
 
+// Returns false if required field was not set, true otherwise
+function checkRequired(val: string, name: string, errors: string[]): boolean {
+    if (val == "") {
+        errors.push(name + ' is a required field.')
+        return false;
+    }
+    return true;
+}
+
 class FullName {
     private _firstName: JQuery;
     private _middleName: JQuery;
@@ -20,16 +29,49 @@ class FullName {
         this._lastName = obj.find('input[name=last-name]').assertOne();
     }
 
-    get fullName(): string {
-        var name = capitalize(this._firstName.val()) + ' ';
-        if (this._middleName.length != 0 && this._middleName.val() != "") {
-            name += capitalize(this._middleName.val()) + ' ';
+    get firstName(): string {
+        return this._firstName.val().trim();
+    }
+
+    get middleName(): string {
+        if (this._middleName.length == 0) {
+            return "";
         }
-        name += capitalize(this._lastName.val());
+        return this._middleName.val().trim();
+    }
+
+    get lastName(): string {
+        return this._lastName.val().trim();
+    }
+
+    get fullName(): string {
+        var name = capitalize(this.firstName) + ' ';
+        if (this.middleName != "") {
+            name += capitalize(this.middleName) + ' ';
+        }
+        name += capitalize(this.lastName);
         return name;
     }
 
+    checkField(field: JQuery, value: string, name: string, errors: string[]): void {
+        if (checkRequired(value, name, errors)) {
+            if (value.split(' ').length != 1) {
+                errors.push(name + ' should only be one word');
+                field.addClass('invalid');
+            } else {
+                field.removeClass('invalid');
+            }
+        } else {
+            field.addClass('invalid');
+        }
+    }
+
     check(errors: string[]): void {
+        this.checkField(this._firstName, this.firstName, 'First name', errors);
+        if (this.middleName != '') {
+            this.checkField(this._middleName, this.middleName, 'Middle name', errors);
+        }
+        this.checkField(this._lastName, this.lastName, 'Last name', errors);
     }
 }
 
