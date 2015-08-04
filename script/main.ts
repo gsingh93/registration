@@ -3,6 +3,9 @@
 /// <reference path="typings/sprintf/sprintf.d.ts"/>
 
 const url = "https://api.parse.com/1/classes/Student";
+const successUrl = "success.html";
+
+var successfulSubmissions = 0;
 
 // TODO: Figure out how to import this function
 declare function sprintf(fmt: string, ...args: any[]): string;
@@ -15,7 +18,7 @@ function getStudents(): JQuery {
 
 function numEntriesChanged($numEntries: JQuery) {
     var val = parseInt($numEntries.find('option:selected').val(), 10);
-    assert.ok(!isNaN(val));
+    assert(!isNaN(val));
 
     var $students = getStudents();
     for (var i = 0; i < 4; i++) {
@@ -37,18 +40,26 @@ function numEntriesChanged($numEntries: JQuery) {
 
     var $cost = $('#cost');
     var cost = parseInt($cost.text(), 10);
-    assert.ok(!isNaN(cost));
+    assert(!isNaN(cost));
 
     var totalCost = val * cost;
     $cost.text(totalCost);
 }
 
 class FullName {
+    firstName: string;
+    middleName: string;
+    lastName: string;
+
     constructor(id) {
+        var obj = $('#' + id);
+        this.firstName = obj.find('input[name=first-name]').val();
+        this.middleName = obj.find('input[name=middle-name]').val();
+        this.lastName = obj.find('input[name=last-name]').val();
     }
 
     get fullName(): string {
-        return "";
+        return this.firstName + ' ' + this.middleName + ' ' + this.lastName;
     }
 
     check(errors: string[]): void {
@@ -117,7 +128,7 @@ class Student {
 
 function handleSubmit(e) {
     e.preventDefault();
-    $('#loading').removeClass('hide');
+    $('#loading').show();
 
     var jsonFormat = '{'
         + '"address": "%s",'
@@ -128,7 +139,7 @@ function handleSubmit(e) {
         + '"class": "%s",'
         + '"gender": "%s",'
         + '"mother": "%s",'
-        + '"father": "%s",'
+        + '"father": "%s"'
         + '}';
 
     var mother = new FullName('mother-name');
@@ -137,12 +148,14 @@ function handleSubmit(e) {
     var email = new Email('primary-email');
     var secondaryEmail = new Email('secondary-email');
     var phoneNumber = new PhoneNumber('phone-number');
-    var students: Student[] = []; // TODO
+
+    var students: Student[] = [new Student('a')];
     assert.notEqual(students.length, 0);
 
     var errors: string[] = [];
 
-    var numEntries = parseInt($('#numEntries option:selected').val(), 10);
+    var numEntries = parseInt($('#numentries option:selected').val(), 10);
+    assert(!isNaN(numEntries));
     assert.notEqual(numEntries, 0);
     for (var i = 0; i < numEntries; i++) {
         students[i].check(errors);
@@ -158,6 +171,7 @@ function handleSubmit(e) {
     if (errors.length != 0) {
         displayErrors(errors);
         window.scrollTo(0, 0);
+        $('#loading').hide();
         return;
     }
 
@@ -175,20 +189,30 @@ function handleSubmit(e) {
                                student.gender,
                                mother.fullName,
                                father.fullName);
+        console.log(jsonData);
         $.ajax({
             url: url,
             method: 'POST',
             data: jsonData,
-            async: false,
             contentType: 'application/json',
             headers: {
                 "X-Parse-Application-Id": "Ok0XAGbx2gAEkRKbgMCb4PJ1GDrmWco7bTzuvXZQ",
                 "X-Parse-REST-API-Key": "kl750bfRK2bF7fHKpmvEwhV9nePqXi81Ad4At8Xp"
-            }
+            },
+            complete: function(response, textStatus) {
+                if (response.readyState == XMLHttpRequest.DONE && response.status == 201) {
+                    successfulSubmissions++;
+                    if (successfulSubmissions == numEntries) {
+                        window.location.href = successUrl;
+                    }
+                } else {
+                    console.log('Status: ' + response.status.toString());
+                    console.log('Response: ' + response.responseText);
+                    alert('An error occurred, please try again.');
+                }
+            },
         });
     }
-
-    $('#loading').hide();
 }
 
 function displayErrors(errors: string[]): void {

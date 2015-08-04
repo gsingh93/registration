@@ -11,7 +11,7 @@ else
 	LINT_FLAGS := --quiet --ignore=compatible-vendor-prefixes,box-model,gradients
 endif
 
-OUT_FILES := index.html style.css loading.gif main.js assert.js sprintf.js
+OUT_FILES := index.html success.html style.css loading.gif main.js assert.js sprintf.js
 
 all: $(OUT_DIR) $(OUT_FILES:%=$(OUT_DIR)/%)
 
