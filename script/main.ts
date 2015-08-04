@@ -64,27 +64,29 @@ function numEntriesChanged($numEntries: JQuery) {
 }
 
 function capitalize(s: string): string {
+    if (s.length == 0) {
+        return "";
+    }
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 class FullName {
-    firstName: string;
-    middleName: string;
-    lastName: string;
+    private _firstName: JQuery;
+    private _middleName: JQuery;
+    private _lastName: JQuery;
 
-    constructor(id) {
-        var obj = $('#' + id).assertOne();
-        this.firstName = obj.find('input[name=first-name]').val();
-        this.middleName = obj.find('input[name=middle-name]').val();
-        this.lastName = obj.find('input[name=last-name]').val();
+    constructor(obj: JQuery) {
+        this._firstName = obj.find('input[name=first-name]');
+        this._middleName = obj.find('input[name=middle-name]');
+        this._lastName = obj.find('input[name=last-name]');
     }
 
     get fullName(): string {
-        var name = capitalize(this.firstName) + ' ';
-        if (this.middleName != undefined && this.middleName != "") {
-            name += capitalize(this.middleName) + ' ';
+        var name = capitalize(this._firstName.val()) + ' ';
+        if (this._middleName.length != 0 && this._middleName.val() != "") {
+            name += capitalize(this._middleName.val()) + ' ';
         }
-        name += capitalize(this.lastName);
+        name += capitalize(this._lastName.val());
         return name;
     }
 
@@ -93,7 +95,7 @@ class FullName {
 }
 
 class Address {
-    constructor(id) {
+    constructor(selector) {
     }
 
     get address(): string {
@@ -105,7 +107,7 @@ class Address {
 }
 
 class Email {
-    constructor(id) {
+    constructor(selector) {
     }
 
     get email(): string {
@@ -117,7 +119,7 @@ class Email {
 }
 
 class PhoneNumber {
-    constructor(id) {
+    constructor(selector) {
     }
 
     get phoneNumber(): string {
@@ -128,24 +130,60 @@ class PhoneNumber {
     }
 }
 
+class Date_ {
+    _day: JQuery;
+    _month: JQuery;
+    _year: JQuery;
+
+    constructor(obj: JQuery) {
+        this._day = obj.find('.day');
+        this._month = obj.find('.month');
+        this._year = obj.find('.year');
+    }
+
+    get date(): string {
+        return this._month.val() + ' ' + this._day.val() + ', ' + this._year.val();
+    }
+}
+
+class Gender {
+    _gender: JQuery;
+
+    constructor(obj: JQuery) {
+        this._gender = $('input[name=gender]:checked');
+    }
+    get gender(): string {
+        return this._gender.val();
+    }
+}
+
 class Student {
-    constructor(id) {
+    private _name: FullName;
+    private _classSelector: JQuery;
+    private _birthday: Date_;
+    private _gender: Gender;
+
+    constructor(obj: JQuery) {
+        this._name = new FullName(obj.find('.full-name').assertOne());
+        this._classSelector = obj.find('.class-selector').assertOne();
+        this._birthday = new Date_(obj.find('.date').assertOne());
+        this._gender = new Gender(obj.find('.gender').assertOne());
     }
 
     get name(): string {
-        return "";
+        return this._name.fullName;
     }
 
     get className(): string {
-        return "";
+        return this._classSelector.find('option:selected').val();
     }
 
     get birthday(): string {
-        return "";
+        return this._birthday.date;
     }
 
     get gender(): string {
-        return "";
+        return this._gender.gender;
     }
 
     check(errors: string[]): void {
@@ -169,14 +207,17 @@ function handleSubmit(e) {
         + '"father": "%s"'
         + '}';
 
-    var mother = new FullName('mother-name');
-    var father = new FullName('father-name');
-    var address = new Address('address');
-    var email = new Email('primary-email');
-    var secondaryEmail = new Email('secondary-email');
-    var phoneNumber = new PhoneNumber('phone-number');
+    var mother = new FullName($('#mother-name').assertOne());
+    var father = new FullName($('#father-name').assertOne());
+    var address = new Address('#address');
+    var email = new Email('#primary-email');
+    var secondaryEmail = new Email('#secondary-email');
+    var phoneNumber = new PhoneNumber('#phone-number');
 
-    var students: Student[] = [new Student('a')];
+    var students: Student[] = [];
+    for (var i = 1; i <= 4; i++) {
+        students.push(new Student($('#student-' + i).assertOne()));
+    }
     assert.notEqual(students.length, 0);
 
     var errors: string[] = [];

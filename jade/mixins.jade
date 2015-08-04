@@ -18,7 +18,7 @@ mixin student(id)
       +gender
 
 mixin gender
-  label.field
+  label.field.gender
     span.label-text Gender:
     label(style='margin-right: 10px;') Male
       input(type='radio', name='gender', value='male')
@@ -26,7 +26,7 @@ mixin gender
       input(type='radio', name='gender', value='female')
 
 mixin class-selector
-  label.field
+  label.field.class-selector
     span.label-text Class:
     select(name='class')
       option(value='invalid', selected='selected') Please select a grade
@@ -40,7 +40,7 @@ mixin class-selector
       option(value='Grade 5') Grade 5
 
 mixin full-name(middle)
-  ul.inputs
+  ul.inputs.full-name
     +text-field('First name', 'first-name')
     if middle === true
       +text-field('Middle name (optional)', 'middle-name')

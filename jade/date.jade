@@ -5,17 +5,17 @@
                 'October', 'November', 'December']
 
 mixin date(label)
-  label.field
+  label.field.date
     span.label-text #{label}:
-    select
+    select.day
       - for (var day = 1; day <= 31; day++) {
         option(value='#{day}') #{day}
       - }
-    select
+    select.month
       - for (var i = 0; i < months.length; i++) {
-        option(value='#{months[i])}') #{months[i]}
+        option(value='#{months[i]}') #{months[i]}
       - }
-    select
+    select.year
       - for (var year = start_year; year <= stop_year; year++) {
         option(value='#{year}') #{year}
       - }
