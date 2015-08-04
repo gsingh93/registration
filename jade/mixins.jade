@@ -47,7 +47,7 @@ mixin full-name(middle)
     +text-field('Last name', 'last-name')
 
 mixin address
-  .section: ul.inputs
+  .section: ul.inputs.address
     +text-field('Street', 'street')
     +text-field('City', 'city')
     li
@@ -62,7 +62,7 @@ mixin email
     +text-field('Confirm email', 'confirm-email')
 
 mixin phone-number(type)
-  .section: ul.inputs
+  .section: ul.inputs.phone-number
     if type === undefined
       - var label = 'Phone number';
     else

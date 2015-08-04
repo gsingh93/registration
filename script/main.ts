@@ -13,6 +13,7 @@ declare function sprintf(fmt: string, ...args: any[]): string;
 interface JQuery {
     assertOne(): any;
     assertOneOrMore(): any;
+    assertOneOrLess(): any;
     assertSize(num: number): any;
 }
 
@@ -70,15 +71,19 @@ function capitalize(s: string): string {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+function capitalize_words(s: string): string {
+    return s; // TODO
+}
+
 class FullName {
     private _firstName: JQuery;
     private _middleName: JQuery;
     private _lastName: JQuery;
 
     constructor(obj: JQuery) {
-        this._firstName = obj.find('input[name=first-name]');
-        this._middleName = obj.find('input[name=middle-name]');
-        this._lastName = obj.find('input[name=last-name]');
+        this._firstName = obj.find('input[name=first-name]').assertOne();
+        this._middleName = obj.find('input[name=middle-name]').assertOneOrLess();
+        this._lastName = obj.find('input[name=last-name]').assertOne();
     }
 
     get fullName(): string {
@@ -95,11 +100,21 @@ class FullName {
 }
 
 class Address {
-    constructor(selector) {
+    _street: JQuery;
+    _city: JQuery;
+    _state: JQuery;
+    _zipcode: JQuery;
+
+    constructor(obj: JQuery) {
+        this._street = obj.find('input[name=street]').assertOne();
+        this._city = obj.find('input[name=city]').assertOne();
+        this._state = obj.find('select[name=state]').assertOne();
+        this._zipcode = obj.find('input[name=zip-code]').assertOne();
     }
 
     get address(): string {
-        return "";
+        return capitalize_words(this._street.val()) + ', ' + capitalize_words(this._city.val())
+            + ', ' + this._state.val() + ', ' + this._zipcode.val();
     }
 
     check(errors: string[]): void {
@@ -107,11 +122,14 @@ class Address {
 }
 
 class Email {
-    constructor(selector) {
+    _email: JQuery;
+
+    constructor(obj: JQuery) {
+        this._email = obj.find('input[name=email]').assertOne();
     }
 
     get email(): string {
-        return "";
+        return this._email.val();
     }
 
     check(errors: string[]): void {
@@ -119,11 +137,14 @@ class Email {
 }
 
 class PhoneNumber {
-    constructor(selector) {
+    _number: JQuery;
+
+    constructor(obj: JQuery) {
+        this._number = obj.find('input[name=phone-number]').assertOne();
     }
 
     get phoneNumber(): string {
-        return "";
+        return this._number.val();
     }
 
     check(errors: string[]): void {
@@ -136,9 +157,9 @@ class Date_ {
     _year: JQuery;
 
     constructor(obj: JQuery) {
-        this._day = obj.find('.day');
-        this._month = obj.find('.month');
-        this._year = obj.find('.year');
+        this._day = obj.find('.day').assertOne();
+        this._month = obj.find('.month').assertOne();
+        this._year = obj.find('.year').assertOne();
     }
 
     get date(): string {
@@ -150,8 +171,12 @@ class Gender {
     _gender: JQuery;
 
     constructor(obj: JQuery) {
-        this._gender = $('input[name=gender]:checked');
+        // This is just here for the assertion
+        obj.find('input[name=gender]').assertSize(2);
+
+        this._gender = obj.find('input[name=gender]:checked');
     }
+
     get gender(): string {
         return this._gender.val();
     }
@@ -209,10 +234,10 @@ function handleSubmit(e) {
 
     var mother = new FullName($('#mother-name').assertOne());
     var father = new FullName($('#father-name').assertOne());
-    var address = new Address('#address');
-    var email = new Email('#primary-email');
-    var secondaryEmail = new Email('#secondary-email');
-    var phoneNumber = new PhoneNumber('#phone-number');
+    var address = new Address($('.address').assertOne());
+    var email = new Email($('#primary-email').assertOne());
+    var secondaryEmail = new Email($('#secondary-email').assertOne());
+    var phoneNumber = new PhoneNumber($('.phone-number').assertOne());
 
     var students: Student[] = [];
     for (var i = 1; i <= 4; i++) {
@@ -255,7 +280,7 @@ function handleSubmit(e) {
                                student.birthday,
                                student.gender,
                                mother.fullName,
-                               mother.fullName);
+                               father.fullName);
         console.log(jsonData);
         // $.ajax({
         //     url: url,
@@ -314,6 +339,14 @@ function addAssertFunctions() {
     $.fn.assertOneOrMore = function() {
         if (this.length <= 1) {
             throw "Expected one or more elements, but selector '" + this.selector + "' found "
+                + this.length + ".";
+        }
+        return this;
+    }
+
+    $.fn.assertOneOrLess = function() {
+        if (this.length > 1) {
+            throw "Expected zero or one elements, but selector '" + this.selector + "' found "
                 + this.length + ".";
         }
         return this;
