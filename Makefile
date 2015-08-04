@@ -8,7 +8,7 @@ ifeq ($(RELEASE), 1)
 	LINT_FLAGS := --quiet
 else
 	JADE_FLAGS := --pretty
-	LINT_FLAGS := --quiet --ignore=compatible-vendor-prefixes,box-model,gradients
+	LINT_FLAGS := --quiet --ignore=compatible-vendor-prefixes,box-model,gradients,outline-none
 endif
 
 OUT_FILES := index.html success.html style.css loading.gif main.js assert.js sprintf.js
