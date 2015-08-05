@@ -130,7 +130,10 @@ function handleSubmit(e) {
     father.check(errors);
     address.check(errors);
     email.check(errors);
-    secondaryEmail.check(errors);
+    secondaryEmail.reset();
+    if (secondaryEmail.email != '' || secondaryEmail.confirmEmail != '') {
+        secondaryEmail.check(errors);
+    }
     phoneNumber.check(errors);
 
     if (errors.length != 0) {
@@ -154,28 +157,28 @@ function handleSubmit(e) {
                                mother.fullName,
                                father.fullName);
         console.log(jsonData);
-        // $.ajax({
-        //     url: url,
-        //     method: 'POST',
-        //     data: jsonData,
-        //     contentType: 'application/json',
-        //     headers: {
-        //         "X-Parse-Application-Id": "Ok0XAGbx2gAEkRKbgMCb4PJ1GDrmWco7bTzuvXZQ",
-        //         "X-Parse-REST-API-Key": "kl750bfRK2bF7fHKpmvEwhV9nePqXi81Ad4At8Xp"
-        //     },
-        //     complete: function(response, textStatus) {
-        //         if (response.readyState == XMLHttpRequest.DONE && response.status == 201) {
-        //             successfulSubmissions++;
-        //             if (successfulSubmissions == numEntries) {
-        //                 window.location.href = successUrl;
-        //             }
-        //         } else {
-        //             console.log('Status: ' + response.status.toString());
-        //             console.log('Response: ' + response.responseText);
-        //             alert('An error occurred, please try again.');
-        //         }
-        //     },
-        // });
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: jsonData,
+            contentType: 'application/json',
+            headers: {
+                "X-Parse-Application-Id": "Ok0XAGbx2gAEkRKbgMCb4PJ1GDrmWco7bTzuvXZQ",
+                "X-Parse-REST-API-Key": "kl750bfRK2bF7fHKpmvEwhV9nePqXi81Ad4At8Xp"
+            },
+            complete: function(response, textStatus) {
+                if (response.readyState == XMLHttpRequest.DONE && response.status == 201) {
+                    successfulSubmissions++;
+                    if (successfulSubmissions == numEntries) {
+                        window.location.href = successUrl;
+                    }
+                } else {
+                    console.log('Status: ' + response.status.toString());
+                    console.log('Response: ' + response.responseText);
+                    alert('An error occurred, please try again.');
+                }
+            },
+        });
     }
 }
 
@@ -201,7 +204,6 @@ function toNum(val): number {
 function displayErrors(errors: Error_[]): void {
     for (var i = 0; i < errors.length; i++) {
         var error = errors[i];
-        console.log(error.message); // TODO: Remove
         error.obj.html(error.message);
     }
     $('#error-message').show();

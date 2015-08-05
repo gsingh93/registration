@@ -184,6 +184,11 @@ class Email {
             this._confirm.addClass('invalid');
         }
     }
+
+    reset(): void {
+        resetField(this._email);
+        resetField(this._confirm);
+    }
 }
 
 class PhoneNumber {
@@ -255,7 +260,7 @@ class Student {
 
     constructor(obj: JQuery) {
         this._name = new FullName(obj.find('.full-name').assertOne());
-        this._classSelector = obj.find('.class-selector').assertOne();
+        this._classSelector = obj.find('select[name=class]').assertOne();
         this._birthday = new Date_(obj.find('.date').assertOne());
         this._gender = new Gender(obj.find('.gender').assertOne());
     }
@@ -277,7 +282,16 @@ class Student {
     }
 
     check(errors: Error_[]): void {
+        var $errorField = resetField(this._classSelector);
+
         this._name.check(errors);
         this._gender.check(errors);
+
+        if (this.className == 'invalid') {
+            errors.push(new Error_(
+                'Please select a grade, or select "I don\'t know" if you are not sure',
+                $errorField
+            ));
+        }
     }
 }
