@@ -40,5 +40,8 @@ ifeq ($(RELEASE), 1)
 	cleancss --s0 $@ -o $@
 endif
 
+publish: all
+	rsync -vaz --delete public/ gdw:content/app/pclass-registration-2015
+
 clean:
 	rm -rf public
