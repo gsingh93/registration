@@ -9,13 +9,22 @@ function capitalize_words(s: string): string {
     return s.split(' ').map(function(w) { return capitalize(w); }).join(' ');
 }
 
-// Returns false if required field was not set, true otherwise
-function checkRequired(errorField: JQuery, val: string, name: string, errors: Error_[]): boolean {
+// Returns false if required field was not set, true otherwise. This function should be called
+// before other checks, as it removes the `invalid` class from the field.
+function checkRequired($field: JQuery, val: string, name: string, errors: Error_[]): boolean {
+    var errorField = getErrorField($field);
+    $field.removeClass('invalid');
+    errorField.text('');
     if (val == "") {
         errors.push(new Error_(name + ' is a required field.', errorField))
+        $field.addClass('invalid');
         return false;
     }
     return true;
+}
+
+function getErrorField(obj: JQuery): JQuery {
+    return obj.parent().find('.error').assertOne();
 }
 
 class Error_ {
@@ -28,18 +37,10 @@ class FullName {
     private _middleName: JQuery;
     private _lastName: JQuery;
 
-    private _firstNameError;
-    private _middleNameError;
-    private _lastNameError;
-
     constructor(obj: JQuery) {
         this._firstName = obj.find('input[name=first-name]').assertOne();
         this._middleName = obj.find('input[name=middle-name]').assertOneOrLess();
         this._lastName = obj.find('input[name=last-name]').assertOne();
-
-        this._firstNameError = this._firstName.parent().find('.error').assertOne();
-        this._middleNameError = this._middleName.parent().find('.error').assertOneOrLess();
-        this._lastNameError = this._lastName.parent().find('.error').assertOne();
     }
 
     get firstName(): string {
@@ -66,29 +67,22 @@ class FullName {
         return name;
     }
 
-    checkField(field: JQuery, value: string, name: string, errorField: JQuery,
-               errors: Error_[]): void {
-        if (checkRequired(errorField, value, name, errors)) {
+    checkField($field: JQuery, value: string, name: string, errors: Error_[]): void {
+        if (checkRequired($field, value, name, errors)) {
             if (value.split(' ').length != 1) {
+                var errorField = getErrorField($field);
                 errors.push(new Error_(name + ' should only be one word', errorField));
-                field.addClass('invalid');
-            } else {
-                field.removeClass('invalid');
+                $field.addClass('invalid');
             }
-        } else {
-            field.addClass('invalid');
         }
     }
 
     check(errors: Error_[]): void {
-        this.checkField(this._firstName, this.firstName, 'First name', this._firstNameError,
-                        errors);
+        this.checkField(this._firstName, this.firstName, 'First name', errors);
         if (this.middleName != '') {
-            this.checkField(this._middleName, this.middleName, 'Middle name', this._middleNameError,
-                            errors);
+            this.checkField(this._middleName, this.middleName, 'Middle name', errors);
         }
-        this.checkField(this._lastName, this.lastName, 'Last name', this._lastNameError,
-                        errors);
+        this.checkField(this._lastName, this.lastName, 'Last name', errors);
     }
 }
 
@@ -105,12 +99,36 @@ class Address {
         this._zipcode = obj.find('input[name=zip-code]').assertOne();
     }
 
+    get street(): string {
+        return this._street.val().trim();
+    }
+
+    get city(): string {
+        return this._city.val().trim();
+    }
+
+    get state(): string {
+        return this._state.val();
+    }
+
+    get zipcode(): string {
+        return this._zipcode.val().trim();
+    }
+
     get address(): string {
-        return capitalize_words(this._street.val()) + ', ' + capitalize_words(this._city.val())
-            + ', ' + this._state.val() + ', ' + this._zipcode.val();
+        return capitalize_words(this.street) + ', ' + capitalize_words(this.city)
+            + ', ' + this.state + ', ' + this.zipcode;
     }
 
     check(errors: Error_[]): void {
+        checkRequired(this._street, this.street, 'Street', errors);
+        checkRequired(this._city, this.city, 'City', errors);
+        if (checkRequired(this._zipcode, this.zipcode, 'ZIP code', errors)) {
+            if (!/^[0-9]{5}$/.test(this.zipcode)) {
+                this._zipcode.addClass('invalid');
+                errors.push(new Error_('Invalid ZIP code', getErrorField(this._zipcode)));
+            }
+        }
     }
 }
 
