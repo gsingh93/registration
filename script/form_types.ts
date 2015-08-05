@@ -9,13 +9,16 @@ function capitalize_words(s: string): string {
     return s.split(' ').map(function(w) { return capitalize(w); }).join(' ');
 }
 
+function resetField($field: JQuery): JQuery {
+    $field.removeClass('invalid');
+    return getErrorField($field).text('');
+}
+
 // Returns false if required field was not set, true otherwise. This function should be called
 // before other checks, as it removes the `invalid` class from the field.
 function checkRequired($field: JQuery, val: string, name: string, errors: Error_[]): boolean {
-    var $errorField = getErrorField($field);
-    $field.removeClass('invalid');
-    $errorField.text('');
     if (val == "") {
+        var $errorField = getErrorField($field);
         errors.push(new Error_(name + ' is a required field.', $errorField))
         $field.addClass('invalid');
         return false;
@@ -78,11 +81,21 @@ class FullName {
     }
 
     check(errors: Error_[]): void {
+        this.reset();
         this.checkField(this._firstName, this.firstName, 'First name', errors);
         if (this.middleName != '') {
             this.checkField(this._middleName, this.middleName, 'Middle name', errors);
         }
         this.checkField(this._lastName, this.lastName, 'Last name', errors);
+    }
+
+    reset(): void {
+        resetField(this._firstName);
+        resetField(this._lastName);
+
+        if (this._middleName.length != 0) {
+            resetField(this._middleName);
+        }
     }
 }
 
@@ -121,12 +134,16 @@ class Address {
     }
 
     check(errors: Error_[]): void {
+        resetField(this._street);
+        resetField(this._city);
+        var $zipErrorField = resetField(this._zipcode);
+
         checkRequired(this._street, this.street, 'Street', errors);
         checkRequired(this._city, this.city, 'City', errors);
         if (checkRequired(this._zipcode, this.zipcode, 'ZIP code', errors)) {
             if (!/^[0-9]{5}$/.test(this.zipcode)) {
                 this._zipcode.addClass('invalid');
-                errors.push(new Error_('Invalid ZIP code', getErrorField(this._zipcode)));
+                errors.push(new Error_('Invalid ZIP code', $zipErrorField));
             }
         }
     }
@@ -144,6 +161,7 @@ class Email {
     }
 
     check(errors: Error_[]): void {
+        resetField(this._email);
         checkRequired(this._email, this.email, 'Email', errors);
     }
 }
@@ -160,7 +178,14 @@ class PhoneNumber {
     }
 
     check(errors: Error_[]): void {
-        checkRequired(this._number, this.phoneNumber, 'Phone number', errors);
+        var $errorField = resetField(this._number);
+        if (checkRequired(this._number, this.phoneNumber, 'Phone number', errors)) {
+            if (!/^[0-9]{3}-[0-9]{3}-[0-9]{4}$/.test(this.phoneNumber)) {
+                this._number.addClass('invalid');
+                errors.push(new Error_('Phone number should be in xxx-xxx-xxxx format',
+                                       $errorField));
+            }
+        }
     }
 }
 
