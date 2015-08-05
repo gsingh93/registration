@@ -6,7 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-URL = 'file:///home/gulshan/code/web/registration/public/index.html'
+URL = 'file:///home/gulshan/code/web/registration/public/index.html#test'
 
 def assertOne(elts):
     assert len(elts) == 1

@@ -7,6 +7,7 @@ const url = "https://api.parse.com/1/classes/Student";
 const successUrl = "success.html";
 
 var successfulSubmissions = 0;
+var TESTING = false;
 
 // TODO: Figure out how to import this function
 declare function sprintf(fmt: string, ...args: any[]): string;
@@ -19,6 +20,10 @@ interface JQuery {
 }
 
 $(function() {
+    if (window.location.hash == '#test') {
+        TESTING = true;
+    }
+
     addAssertFunctions();
 
     getStudents().each(function(index, elt) {
@@ -156,29 +161,36 @@ function handleSubmit(e) {
                                student.gender,
                                mother.fullName,
                                father.fullName);
-        console.log(jsonData);
-        $.ajax({
-            url: url,
-            method: 'POST',
-            data: jsonData,
-            contentType: 'application/json',
-            headers: {
-                "X-Parse-Application-Id": "Ok0XAGbx2gAEkRKbgMCb4PJ1GDrmWco7bTzuvXZQ",
-                "X-Parse-REST-API-Key": "kl750bfRK2bF7fHKpmvEwhV9nePqXi81Ad4At8Xp"
-            },
-            complete: function(response, textStatus) {
-                if (response.readyState == XMLHttpRequest.DONE && response.status == 201) {
-                    successfulSubmissions++;
-                    if (successfulSubmissions == numEntries) {
-                        window.location.href = successUrl;
+        if (TESTING) {
+            console.log(jsonData);
+            successfulSubmissions++;
+            if (successfulSubmissions == numEntries) {
+                window.location.href = successUrl;
+            }
+        } else {
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: jsonData,
+                contentType: 'application/json',
+                headers: {
+                    "X-Parse-Application-Id": "Ok0XAGbx2gAEkRKbgMCb4PJ1GDrmWco7bTzuvXZQ",
+                    "X-Parse-REST-API-Key": "kl750bfRK2bF7fHKpmvEwhV9nePqXi81Ad4At8Xp"
+                },
+                complete: function(response, textStatus) {
+                    if (response.readyState == XMLHttpRequest.DONE && response.status == 201) {
+                        successfulSubmissions++;
+                        if (successfulSubmissions == numEntries) {
+                            window.location.href = successUrl;
+                        }
+                    } else {
+                        console.log('Status: ' + response.status.toString());
+                        console.log('Response: ' + response.responseText);
+                        alert('An error occurred, please try again.');
                     }
-                } else {
-                    console.log('Status: ' + response.status.toString());
-                    console.log('Response: ' + response.responseText);
-                    alert('An error occurred, please try again.');
-                }
-            },
-        });
+                },
+            });
+        }
     }
 }
 
