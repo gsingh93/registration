@@ -1,11 +1,12 @@
 include date.jade
 include state.jade
 
-mixin text-field(label, name, placeholder)
+mixin text-field(label, name, placeholder, type)
   li
     label
       span.label-text #{label}:
-      input(type='text', name='#{name}', placeholder=placeholder)
+      - type = type || 'text'
+      input(type=type, name='#{name}', placeholder=placeholder)
       .error.red
 
 mixin student(id)
@@ -15,16 +16,16 @@ mixin student(id)
       +full-name(true)
       +class-selector
       +date('Birthday')
-      +gender
+      +gender(id)
 
-mixin gender
+mixin gender(id)
   label.field.gender
     span.label-text Gender:
     .field-input
       label(style='margin-right: 10px;') Male
-        input(type='radio', name='gender', value='male')
+        input(type='radio', name='gender-#{id}', value='male')
       label Female
-        input(type='radio', name='gender', value='female')
+        input(type='radio', name='gender-#{id}', value='female')
     .error.red
 
 mixin class-selector
@@ -62,8 +63,8 @@ mixin address
 
 mixin email
   .section: ul.inputs
-    +text-field('Email', 'email')
-    +text-field('Confirm email', 'confirm-email')
+    +text-field('Email', 'email', undefined, 'email')
+    +text-field('Confirm email', 'confirm-email', undefined, 'email')
 
 mixin phone-number(type)
   .section: ul.inputs.phone-number

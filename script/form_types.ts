@@ -235,8 +235,8 @@ class Gender {
     _gender: JQuery;
 
     constructor(obj: JQuery) {
-        this._genderInput = obj.find('input[name=gender]').assertSize(2);
-        this._gender = obj.find('input[name=gender]:checked').assertOneOrLess();
+        this._genderInput = obj.find('input[name^=gender]').assertSize(2);
+        this._gender = obj.find('input[name^=gender]:checked').assertOneOrLess();
     }
 
     get gender(): string {
