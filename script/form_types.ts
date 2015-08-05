@@ -151,18 +151,38 @@ class Address {
 
 class Email {
     _email: JQuery;
+    _confirm: JQuery;
 
     constructor(obj: JQuery) {
         this._email = obj.find('input[name=email]').assertOne();
+        this._confirm = obj.find('input[name=confirm-email]').assertOne();
     }
 
     get email(): string {
         return this._email.val().trim();
     }
 
+    get confirmEmail(): string {
+        return this._confirm.val().trim();
+    }
+
     check(errors: Error_[]): void {
-        resetField(this._email);
-        checkRequired(this._email, this.email, 'Email', errors);
+        var $errorField = resetField(this._email);
+        var $confirmErrorField = resetField(this._confirm);
+
+        if (checkRequired(this._email, this.email, 'Email', errors)) {
+            if (!/^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(this.email)) {
+                this._email.addClass('invalid');
+                errors.push(new Error_('Invalid email address', $errorField));
+            }
+            if (this.email != this.confirmEmail) {
+                this._email.addClass('invalid');
+                this._confirm.addClass('invalid');
+                errors.push(new Error_("Email addresses don't match", $confirmErrorField));
+            }
+        } else {
+            this._confirm.addClass('invalid');
+        }
     }
 }
 
