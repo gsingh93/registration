@@ -118,7 +118,7 @@ function handleSubmit(e) {
     }
     assert.notEqual(students.length, 0);
 
-    var errors: string[] = [];
+    var errors: Error_[] = [];
 
     var numEntries = getNumEntries();
     assert.notEqual(numEntries, 0);
@@ -199,6 +199,10 @@ function toNum(val): number {
     return num;
 }
 
-function displayErrors(errors: string[]): void {
-    console.log(errors);
+function displayErrors(errors: Error_[]): void {
+    for (var i = 0; i < errors.length; i++) {
+        var error = errors[i];
+        console.log(error.message); // TODO: Remove
+        error.obj.html(error.message);
+    }
 }

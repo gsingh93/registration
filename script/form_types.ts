@@ -10,12 +10,17 @@ function capitalize_words(s: string): string {
 }
 
 // Returns false if required field was not set, true otherwise
-function checkRequired(val: string, name: string, errors: string[]): boolean {
+function checkRequired(errorField: JQuery, val: string, name: string, errors: Error_[]): boolean {
     if (val == "") {
-        errors.push(name + ' is a required field.')
+        errors.push(new Error_(name + ' is a required field.', errorField))
         return false;
     }
     return true;
+}
+
+class Error_ {
+    constructor(public message: string, public obj: JQuery) {
+    }
 }
 
 class FullName {
@@ -23,10 +28,18 @@ class FullName {
     private _middleName: JQuery;
     private _lastName: JQuery;
 
+    private _firstNameError;
+    private _middleNameError;
+    private _lastNameError;
+
     constructor(obj: JQuery) {
         this._firstName = obj.find('input[name=first-name]').assertOne();
         this._middleName = obj.find('input[name=middle-name]').assertOneOrLess();
         this._lastName = obj.find('input[name=last-name]').assertOne();
+
+        this._firstNameError = this._firstName.parent().find('.error').assertOne();
+        this._middleNameError = this._middleName.parent().find('.error').assertOneOrLess();
+        this._lastNameError = this._lastName.parent().find('.error').assertOne();
     }
 
     get firstName(): string {
@@ -53,10 +66,11 @@ class FullName {
         return name;
     }
 
-    checkField(field: JQuery, value: string, name: string, errors: string[]): void {
-        if (checkRequired(value, name, errors)) {
+    checkField(field: JQuery, value: string, name: string, errorField: JQuery,
+               errors: Error_[]): void {
+        if (checkRequired(errorField, value, name, errors)) {
             if (value.split(' ').length != 1) {
-                errors.push(name + ' should only be one word');
+                errors.push(new Error_(name + ' should only be one word', errorField));
                 field.addClass('invalid');
             } else {
                 field.removeClass('invalid');
@@ -66,12 +80,15 @@ class FullName {
         }
     }
 
-    check(errors: string[]): void {
-        this.checkField(this._firstName, this.firstName, 'First name', errors);
+    check(errors: Error_[]): void {
+        this.checkField(this._firstName, this.firstName, 'First name', this._firstNameError,
+                        errors);
         if (this.middleName != '') {
-            this.checkField(this._middleName, this.middleName, 'Middle name', errors);
+            this.checkField(this._middleName, this.middleName, 'Middle name', this._middleNameError,
+                            errors);
         }
-        this.checkField(this._lastName, this.lastName, 'Last name', errors);
+        this.checkField(this._lastName, this.lastName, 'Last name', this._lastNameError,
+                        errors);
     }
 }
 
@@ -93,7 +110,7 @@ class Address {
             + ', ' + this._state.val() + ', ' + this._zipcode.val();
     }
 
-    check(errors: string[]): void {
+    check(errors: Error_[]): void {
     }
 }
 
@@ -108,7 +125,7 @@ class Email {
         return this._email.val();
     }
 
-    check(errors: string[]): void {
+    check(errors: Error_[]): void {
     }
 }
 
@@ -123,7 +140,7 @@ class PhoneNumber {
         return this._number.val();
     }
 
-    check(errors: string[]): void {
+    check(errors: Error_[]): void {
     }
 }
 
@@ -187,6 +204,6 @@ class Student {
         return this._gender.gender;
     }
 
-    check(errors: string[]): void {
+    check(errors: Error_[]): void {
     }
 }
