@@ -135,7 +135,6 @@ function handleSubmit(e) {
 
     if (errors.length != 0) {
         displayErrors(errors);
-        window.scrollTo(0, 0);
         $('#loading').hide();
         return;
     }
@@ -205,4 +204,5 @@ function displayErrors(errors: Error_[]): void {
         console.log(error.message); // TODO: Remove
         error.obj.html(error.message);
     }
+    $('#error-message').show();
 }
