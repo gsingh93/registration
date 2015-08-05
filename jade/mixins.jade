@@ -20,10 +20,11 @@ mixin student(id)
 mixin gender
   label.field.gender
     span.label-text Gender:
-    label(style='margin-right: 10px;') Male
-      input(type='radio', name='gender', value='male')
-    label Female
-      input(type='radio', name='gender', value='female')
+    .field-input
+      label(style='margin-right: 10px;') Male
+        input(type='radio', name='gender', value='male')
+      label Female
+        input(type='radio', name='gender', value='female')
     .error.red
 
 mixin class-selector

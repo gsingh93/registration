@@ -12,11 +12,11 @@ function capitalize_words(s: string): string {
 // Returns false if required field was not set, true otherwise. This function should be called
 // before other checks, as it removes the `invalid` class from the field.
 function checkRequired($field: JQuery, val: string, name: string, errors: Error_[]): boolean {
-    var errorField = getErrorField($field);
+    var $errorField = getErrorField($field);
     $field.removeClass('invalid');
-    errorField.text('');
+    $errorField.text('');
     if (val == "") {
-        errors.push(new Error_(name + ' is a required field.', errorField))
+        errors.push(new Error_(name + ' is a required field.', $errorField))
         $field.addClass('invalid');
         return false;
     }
@@ -70,8 +70,8 @@ class FullName {
     checkField($field: JQuery, value: string, name: string, errors: Error_[]): void {
         if (checkRequired($field, value, name, errors)) {
             if (value.split(' ').length != 1) {
-                var errorField = getErrorField($field);
-                errors.push(new Error_(name + ' should only be one word', errorField));
+                var $errorField = getErrorField($field);
+                errors.push(new Error_(name + ' should only be one word', $errorField));
                 $field.addClass('invalid');
             }
         }
@@ -140,10 +140,11 @@ class Email {
     }
 
     get email(): string {
-        return this._email.val();
+        return this._email.val().trim();
     }
 
     check(errors: Error_[]): void {
+        checkRequired(this._email, this.email, 'Email', errors);
     }
 }
 
@@ -155,10 +156,11 @@ class PhoneNumber {
     }
 
     get phoneNumber(): string {
-        return this._number.val();
+        return this._number.val().trim();
     }
 
     check(errors: Error_[]): void {
+        checkRequired(this._number, this.phoneNumber, 'Phone number', errors);
     }
 }
 
@@ -179,17 +181,24 @@ class Date_ {
 }
 
 class Gender {
+    _genderInput: JQuery;
     _gender: JQuery;
 
     constructor(obj: JQuery) {
-        // This is just here for the assertion
-        obj.find('input[name=gender]').assertSize(2);
-
-        this._gender = obj.find('input[name=gender]:checked');
+        this._genderInput = obj.find('input[name=gender]').assertSize(2);
+        this._gender = obj.find('input[name=gender]:checked').assertOneOrLess();
     }
 
     get gender(): string {
         return this._gender.val();
+    }
+
+    check(errors: Error_[]): void {
+        var $errorField = this._genderInput.parents('.gender').find('.error').assertOne();
+        $errorField.text('');
+        if (this._gender.length == 0) {
+            errors.push(new Error_('Gender is a required field.', $errorField))
+        }
     }
 }
 
@@ -223,5 +232,7 @@ class Student {
     }
 
     check(errors: Error_[]): void {
+        this._name.check(errors);
+        this._gender.check(errors);
     }
 }
