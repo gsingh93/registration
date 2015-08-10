@@ -14,7 +14,7 @@ function sendEmail(to, name) {
     console.log("Sending email to " + to);
 
     var sendgrid = require("sendgrid");
-    sendgrid.initialize("gsingh93", "sN&xxcEGT6OK");
+    sendgrid.initialize("gsingh93", "SENDGRID_PASSWORD_HERE");
     sendgrid.sendEmail({
         to: to,
         from: "pclass_registration@michigangurudwara.com",
@@ -57,7 +57,7 @@ function sendSummaryEmail(send_summary, owner_email, status) {
             return;
         }
         var sendgrid = require("sendgrid");
-        sendgrid.initialize("gsingh93", "sN&xxcEGT6OK");
+        sendgrid.initialize("gsingh93", "SENDGRID_PASSWORD_HERE");
         sendgrid.sendEmail({
             to: owner_email,
             from: "pclass_registration@michigangurudwara.com",

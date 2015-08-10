@@ -1,3 +1,7 @@
 secret.py
-global.json
+
 masterkey.txt
+sendgrid_password.txt
+
+global.json
+main.js

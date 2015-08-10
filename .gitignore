@@ -1,3 +1,4 @@
-public
+/public
 bower_components
 *.pyc
+/script/typings
