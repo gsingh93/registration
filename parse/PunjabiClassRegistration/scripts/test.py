@@ -26,18 +26,18 @@ req1 = json.dumps({
     "father": "Kanwerdip Singh"
 })
 
-req2 = json.dumps({
-    "address": "A, B, MI, 33333",
-    "primaryEmail": "gsingh2011@gmail.com",
-    "secondaryEmail": "gsingh_2011@yahoo.com",
-    "phoneNumber": "222-222-2222",
-    "name": "Gulshan Singh",
-    "class": "Kindergarten",
-    "birthday": "January 1, 1990",
-    "gender": "male",
-    "mother": "Jaspal Kaur",
-    "father": "Kanwerdip Singh"
-})
-
 send_request(req1)
-#send_request(req2)
+
+# req2 = json.dumps({
+#     "address": "A, B, MI, 33333",
+#     "primaryEmail": "gsingh2011@gmail.com",
+#     "secondaryEmail": "gsingh_2011@yahoo.com",
+#     "phoneNumber": "222-222-2222",
+#     "name": "Gulshan Singh",
+#     "class": "Kindergarten",
+#     "birthday": "January 1, 1990",
+#     "gender": "male",
+#     "mother": "Jaspal Kaur",
+#     "father": "Kanwerdip Singh"
+# })
+# send_request(req2)
