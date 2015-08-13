@@ -41,6 +41,8 @@ column_names = [
     'Primary Email',
     'Secondary Email',
     'Phone Number',
+    'Amount',
+    'Payment Type',
 ]
 
 f.writerow(column_names)
