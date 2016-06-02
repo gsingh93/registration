@@ -1,5 +1,8 @@
 SHELL := /bin/bash
 
+YEAR := $(shell date '+%y')
+PROJECT := camp
+
 OUT_DIR := public
 
 RELEASE ?= 0
@@ -20,6 +23,10 @@ $(OUT_DIR):
 
 $(OUT_DIR)/loading.gif: images/loading.gif
 	cp $< $(OUT_DIR)
+
+$(OUT_DIR)/index.html: jade/index-$(PROJECT).jade jade/mixins.jade jade/date.jade jade/state.jade
+	jade $(JADE_FLAGS) $< -o $(OUT_DIR)
+	mv $(OUT_DIR)/index-$(PROJECT).html $(OUT_DIR)/index.html
 
 $(OUT_DIR)/%.html: jade/%.jade jade/mixins.jade jade/date.jade jade/state.jade
 	jade $(JADE_FLAGS) $< -o $(OUT_DIR)
@@ -44,7 +51,7 @@ test: all
 	tests/test.py
 
 publish: all
-	rsync -vaz --delete public/ gdw:content/app/pclass-registration-2015
+	rsync -vaz --delete public/ gdw:content/app/$(PROJECT)-registration-$(YEAR)
 
 clean:
 	rm -rf public
