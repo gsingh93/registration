@@ -37,7 +37,10 @@ $(OUT_DIR)/assert.js: bower_components/assert/assert.js
 $(OUT_DIR)/sprintf.js: bower_components/sprintf/dist/sprintf.min.js
 	cp $< $@
 
-$(OUT_DIR)/%.js: script/%.ts script/form_types.ts
+$(OUT_DIR)/main.js: script/main-$(PROJECT).ts script/form_types.ts script/common.ts
+	tsc -t ES5 $< --out $@
+
+$(OUT_DIR)/%.js: script/%.ts script/form_types.ts script/common.ts
 	tsc -t ES5 $< --out $@
 
 $(OUT_DIR)/style.css: css/*

@@ -1,7 +1,7 @@
 include mixins.jade
 
-- var year = 2015;
-- var cost = 50;
+- var year = 2016;
+- var cost = 70;
 -
   var links = {
     'chrome': 'https://www.google.com/intl/en/chrome/browser/',
@@ -13,18 +13,18 @@ doctype html
 
 html
   head
-    title Punjabi Class Registration
+    title Youth Camp Registration
     link(rel='stylesheet', href='style.css')
   body
-    h1 #{year} - #{year + 1} Punjabi Class Registration
+    h1 #{year} Youth Camp Registration
     p.
       #[b NOTE:] Online registration will only work with the latest versions of
       #[a(href='#{links.chrome}') Chrome], #[a(href='#{links.ff}') Firefox], or
       #[a(href='#{links.ie}') Internet Explorer].
       If the form does not load, please try updating your browser.
-    p: b Select the number of students you are registering to begin.
+    p: b Select the number of campers you are registering to begin.
 
-    label(for='numentries') Number of Students:
+    label(for='numentries') Number of campers:
     select#numentries
       option(value='0') Please choose one
       option(value='1') 1
@@ -33,11 +33,11 @@ html
       option(value='4') 4
 
     form#form.hide
-      +student(1)
-      +student(2)
-      +student(3)
-      +student(4)
-
+      +camper(1)
+      +camper(2)
+      +camper(3)
+      +camper(4)
+      
       hr
 
       #father-name
@@ -72,8 +72,28 @@ html
       hr
 
       .section
+        div Please list any seva that you (the parents) can perform:
+          br
+          br
+          div#seva
+            input(type='checkbox', name='langar')
+            span.checkbox-label Langar
+            input(type='checkbox', name='Snack')
+            span.checkbox-label Snack
+            input(type='checkbox', name='Sponsor T-Shirt')
+            span.checkbox-label Sponsor T-Shirt (full or partial)
+            input(type='checkbox', name='Field Trip')
+            span.checkbox-label Field Trip (full or partial)
+            input(type='checkbox', name='Clean up')
+            span.checkbox-label Clean up
+            input(type='checkbox', name='Cash Donation')
+            span.checkbox-label Cash Donation
+
+      hr
+
+      .section
         p.
-          The payment of the $#[span#cost #{cost}] (total) school fee can be given to Kanwerdip Singh
+          The payment of the $#[span#cost #{cost}] (total) fee can be given to Jasvir Singh
           in person.
 
         button#submit.submit Submit
