@@ -35,7 +35,7 @@ class App {
         var $numEntries = $('#numentries');
         $numEntries.change(() => this.numEntriesChanged($numEntries));
 
-        $('#submit').click(this.handleSubmit);
+        $('#submit').click((e) => this.handleSubmit(e));
     }
 
     private numEntriesChanged($numEntries: JQuery) {
@@ -89,7 +89,7 @@ class App {
 
         var students: Student[] = [];
         for (var i = 1; i <= 4; i++) {
-            students.push(new Student($('#student-' + i).assertOne()));
+            students.push(new Student($('#' + this.id + '-' + i).assertOne()));
         }
         assert.notEqual(students.length, 0);
 
