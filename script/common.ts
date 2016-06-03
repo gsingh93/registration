@@ -3,7 +3,6 @@
 /// <reference path="typings/sprintf/sprintf.d.ts"/>
 /// <reference path="form_types.ts"/>
 
-const url = "https://api.parse.com/1/classes/Student";
 const successUrl = "success.html";
 
 // TODO: Figure out how to import this function
@@ -17,11 +16,11 @@ interface JQuery {
 }
 
 class App {
-    private successfulSubmissions: number = 0;
     private TESTING: boolean = true;
+    private successfulSubmissions: number = 0;
     private cost: number;
 
-    constructor(private id: string) {
+    constructor(private id: string, private url: string, private app_id, private api_key: string) {
         if (window.location.hash == '#test') {
             this.TESTING = true;
         }
@@ -140,13 +139,13 @@ class App {
                 }
             } else {
                 $.ajax({
-                    url: url,
+                    url: this.url,
                     method: 'POST',
                     data: jsonData,
                     contentType: 'application/json',
                     headers: {
-                        "X-Parse-Application-Id": "Ok0XAGbx2gAEkRKbgMCb4PJ1GDrmWco7bTzuvXZQ",
-                        "X-Parse-REST-API-Key": "kl750bfRK2bF7fHKpmvEwhV9nePqXi81Ad4At8Xp"
+                        "X-Parse-Application-Id": this.app_id,
+                        "X-Parse-REST-API-Key": this.api_key,
                     },
                     complete: function(response, textStatus) {
                         if (response.readyState == XMLHttpRequest.DONE && response.status == 201) {
