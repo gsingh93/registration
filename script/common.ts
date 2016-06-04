@@ -19,6 +19,7 @@ class App {
     private TESTING: boolean = false;
     private successfulSubmissions: number = 0;
     private cost: number;
+    private lateCost: number;
 
     constructor(
         private id: string,
@@ -31,6 +32,10 @@ class App {
             this.TESTING = true;
         }
         this.cost = toNum($('#cost').text());
+        var lateCost = $('#late-cost').text()
+        if (lateCost !== '') {
+            this.lateCost = toNum(lateCost);
+        }
         addAssertFunctions();
 
         this.getStudents().each(function(index, elt) {
@@ -66,7 +71,9 @@ class App {
         }
 
         var totalCost = val * this.cost;
+        var totalLateCost = val * this.lateCost;
         $('#cost').text(totalCost);
+        $('#late-cost').text(totalLateCost);
     }
 
     private handleSubmit(e) {
