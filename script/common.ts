@@ -20,7 +20,13 @@ class App {
     private successfulSubmissions: number = 0;
     private cost: number;
 
-    constructor(private id: string, private url: string, private app_id, private api_key: string) {
+    constructor(
+        private id: string,
+        private url: string,
+        private app_id: string,
+        private api_key: string,
+        private get_json_data_func: any // TODO
+    ) {
         if (window.location.hash == '#test') {
             this.TESTING = true;
         }
@@ -67,19 +73,6 @@ class App {
         e.preventDefault();
         $('#loading').show();
 
-        var jsonFormat = '{'
-            + '"address": "%s",'
-            + '"primaryEmail": "%s",'
-            + '"secondaryEmail": "%s",'
-            + '"phoneNumber": "%s",'
-            + '"name": "%s",'
-            + '"class": "%s",'
-            + '"birthday": "%s",'
-            + '"gender": "%s",'
-            + '"mother": "%s",'
-            + '"father": "%s"'
-            + '}';
-
         var mother = new FullName($('#mother-name').assertOne());
         var father = new FullName($('#father-name').assertOne());
         var address = new Address($('.address').assertOne());
@@ -87,9 +80,15 @@ class App {
         var secondaryEmail = new Email($('#secondary-email').assertOne());
         var phoneNumber = new PhoneNumber($('.phone-number').assertOne());
 
-        var students: Student[] = [];
+        // TODO: Type this
+        var students = [];
         for (var i = 1; i <= 4; i++) {
-            students.push(new Student($('#' + this.id + '-' + i).assertOne()));
+            // TODO: This is hacky
+            if (this.id === 'student') {
+                students.push(new Student($('#' + this.id + '-' + i).assertOne()));
+            } else {
+                students.push(new Camper($('#' + this.id + '-' + i).assertOne()));
+            }
         }
         assert.notEqual(students.length, 0);
 
@@ -111,6 +110,7 @@ class App {
         }
         phoneNumber.check(errors);
 
+        // TODO: There may be more errors
         if (errors.length != 0) {
             displayErrors(errors);
             $('#loading').hide();
@@ -120,19 +120,23 @@ class App {
         for (var i = 0; i < numEntries; i++) {
             var student = students[i];
 
-            var jsonData = sprintf(jsonFormat,
-                                   address.address,
-                                   email.email,
-                                   secondaryEmail.email,
-                                   phoneNumber.phoneNumber,
-                                   student.name,
-                                   student.className,
-                                   student.birthday,
-                                   student.gender,
-                                   mother.fullName,
-                                   father.fullName);
+            var jsonData = {
+                'address': address.address,
+                'primaryEmail': email.email,
+                'secondaryEmail': secondaryEmail,
+                'phoneNumber': phoneNumber.phoneNumber,
+                'name': student.name,
+                'gender': student.gender,
+                'mother': mother.fullName,
+                'father': father.fullName,
+            };
+
+            this.get_json_data_func(student, jsonData);
+
+            var jsonString = JSON.stringify(jsonData);
+
             if (this.TESTING) {
-                console.log(jsonData);
+                console.log(jsonString);
                 this.successfulSubmissions++;
                 if (this.successfulSubmissions == numEntries) {
                     window.location.href = successUrl;
@@ -141,7 +145,7 @@ class App {
                 $.ajax({
                     url: this.url,
                     method: 'POST',
-                    data: jsonData,
+                    data: jsonString,
                     contentType: 'application/json',
                     headers: {
                         "X-Parse-Application-Id": this.app_id,

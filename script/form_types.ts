@@ -287,10 +287,64 @@ class Student {
         this._name.check(errors);
         this._gender.check(errors);
 
+        // TODO: Make sure birthday is set
+
         if (this.className == 'invalid') {
             errors.push(new Error_(
                 'Please select a grade, or select "I don\'t know" if you are not sure',
                 $errorField
+            ));
+        }
+    }
+}
+
+class Camper {
+    private _name: FullName;
+    private _tShirtSelector: JQuery;
+    private _age: JQuery;
+    private _gender: Gender;
+
+    constructor(obj: JQuery) {
+        this._name = new FullName(obj.find('.full-name').assertOne());
+        this._tShirtSelector = obj.find('select[name=tshirt]').assertOne();
+        this._age = obj.find('.number').assertOne();
+        this._gender = new Gender(obj.find('.gender').assertOne());
+    }
+
+    get name(): string {
+        return this._name.fullName;
+    }
+
+    get tShirt(): string {
+        return this._tShirtSelector.find('option:selected').val();
+    }
+
+    get age(): string {
+        return this._age.find('option:selected').val();
+    }
+
+    get gender(): string {
+        return this._gender.gender;
+    }
+
+    check(errors: Error_[]): void {
+        var $tShirtErrorField = resetField(this._tShirtSelector);
+        var $ageErrorField = resetField(this._age);
+
+        this._name.check(errors);
+        this._gender.check(errors);
+
+        if (this.age == 'invalid') {
+            errors.push(new Error_(
+                'Please choose an age',
+                $ageErrorField
+            ));
+        }
+
+        if (this.tShirt == 'invalid') {
+            errors.push(new Error_(
+                'Please choose a t-shirt size',
+                $tShirtErrorField
             ));
         }
     }
