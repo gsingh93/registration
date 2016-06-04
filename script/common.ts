@@ -123,7 +123,7 @@ class App {
             var jsonData = {
                 'address': address.address,
                 'primaryEmail': email.email,
-                'secondaryEmail': secondaryEmail,
+                'secondaryEmail': secondaryEmail.email,
                 'phoneNumber': phoneNumber.phoneNumber,
                 'name': student.name,
                 'gender': student.gender,

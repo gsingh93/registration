@@ -303,12 +303,14 @@ class Camper {
     private _tShirtSelector: JQuery;
     private _age: JQuery;
     private _gender: Gender;
+    private _skills: JQuery;
 
     constructor(obj: JQuery) {
         this._name = new FullName(obj.find('.full-name').assertOne());
         this._tShirtSelector = obj.find('select[name=tshirt]').assertOne();
         this._age = obj.find('.number').assertOne();
         this._gender = new Gender(obj.find('.gender').assertOne());
+        this._skills = obj.find('.skills').assertOne();
     }
 
     get name(): string {
@@ -325,6 +327,11 @@ class Camper {
 
     get gender(): string {
         return this._gender.gender;
+    }
+
+    get skills(): string {
+        var selected = this._skills.find('input:checkbox:checked + span').toArray();
+        return selected.map((x) => $(x).text()).join(', ');
     }
 
     check(errors: Error_[]): void {

@@ -4,7 +4,11 @@ function get_json_data(camper, jsonData): void {
     jsonData['tshirt'] = camper.tShirt;
     jsonData['age'] = camper.age;
 
-    // TODO: Get and check langar seva, and skills
+    jsonData['skills'] = camper.skills;
+
+    var seva = $('#seva').find('input:checkbox:checked + span').toArray();
+    seva = seva.map((x) => $(x).text());
+    jsonData['seva'] = seva.join(', ');
 }
 
 $(function() {
