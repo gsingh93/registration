@@ -16,7 +16,7 @@ interface JQuery {
 }
 
 class App {
-    private TESTING: boolean = true;
+    private TESTING: boolean = false;
     private successfulSubmissions: number = 0;
     private cost: number;
 
@@ -142,6 +142,7 @@ class App {
                     window.location.href = successUrl;
                 }
             } else {
+                console.log(jsonString);
                 $.ajax({
                     url: this.url,
                     method: 'POST',
@@ -151,7 +152,7 @@ class App {
                         "X-Parse-Application-Id": this.app_id,
                         "X-Parse-REST-API-Key": this.api_key,
                     },
-                    complete: function(response, textStatus) {
+                    complete: (response, textStatus) => {
                         if (response.readyState == XMLHttpRequest.DONE && response.status == 201) {
                             this.successfulSubmissions++;
                             if (this.successfulSubmissions == numEntries) {

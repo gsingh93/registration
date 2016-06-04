@@ -12,7 +12,7 @@ mixin text-field(label, name, placeholder, type)
 mixin number-selector(label, min, max)
   label.field
     span.label-text #{label}
-    select.number.field-input
+    select.number.field-input(name='age')
       - var i = min
       option(value='invalid')
       while i <= max

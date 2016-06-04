@@ -99,6 +99,15 @@ class Student:
         self.grade = Select(assertOne(elt.find_elements_by_css_selector('select[name=class]')))
 
 
+class Camper:
+    def __init__(self, elt):
+        self.name = FullName(assertOne(elt.find_elements_by_class_name('full-name')))
+        self.gender = Gender(assertOne(elt.find_elements_by_class_name('gender')))
+        self.tshirt = Select(assertOne(elt.find_elements_by_css_selector('select[name=tshirt]')))
+        self.age = Select(assertOne(elt.find_elements_by_css_selector('select[name=age]')))
+        # TODO: Skills
+
+
 class Form:
     def __init__(self, url, driver):
         driver.get(url)
