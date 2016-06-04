@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-YEAR := $(shell date '+%y')
+YEAR := $(shell date '+%Y')
 PROJECT := camp
 
 OUT_DIR := public

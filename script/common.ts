@@ -1,12 +1,8 @@
 /// <reference path="typings/jquery/jquery.d.ts"/>
 /// <reference path="typings/assert/assert.d.ts"/>
-/// <reference path="typings/sprintf/sprintf.d.ts"/>
 /// <reference path="form_types.ts"/>
 
 const successUrl = "success.html";
-
-// TODO: Figure out how to import this function
-declare function sprintf(fmt: string, ...args: any[]): string;
 
 interface JQuery {
     assertOne(): any;
