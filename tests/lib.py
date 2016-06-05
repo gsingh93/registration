@@ -5,7 +5,7 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-URL = 'file:///home/gulshan/code/web/registration/public/index.html#test'
+URL = 'file:///Users/gulshan/code/registration/public/index.html#test'
 
 
 def assertOne(elts):
@@ -62,8 +62,8 @@ class Email:
 
 
 class PhoneNumber:
-    def __init__(self, elt):
-        self.number = assertOne(elt.find_elements_by_css_selector('input[name=phone-number]'))
+    def __init__(self, elt, type):
+        self.number = assertOne(elt.find_elements_by_css_selector('input[name=%s-phone-number]' % type))
 
 
 class Gender:
@@ -126,11 +126,13 @@ class Form:
         self.address = Address(assertOne(form.find_elements_by_class_name('address')))
         self.primary_email = Email(assertOne(form.find_elements_by_id('primary-email')))
         self.secondary_email = Email(assertOne(form.find_elements_by_id('secondary-email')))
-        self.phone_number = PhoneNumber(assertOne(form.find_elements_by_class_name('phone-number')))
+        self.cell_phone_number = PhoneNumber(form.find_elements_by_class_name('phone-number')[0], 'Cell')
+        self.home_phone_number = PhoneNumber(form.find_elements_by_class_name('phone-number')[1], 'Home')
 
         self.students = []
         for i in range(1, 5):
-            self.students.append(Student(assertOne(form.find_elements_by_id('student-' + str(i)))))
+            #self.students.append(Student(assertOne(form.find_elements_by_id('student-' + str(i)))))
+            self.students.append(Camper(assertOne(form.find_elements_by_id('camper-' + str(i)))))
 
         self._submit = form.find_element_by_id('submit')
 
@@ -158,14 +160,28 @@ class Form:
     def set_secondary_email(self, emails):
         self.set_email(self.secondary_email, emails)
 
-    def set_phone_number(self, number):
-        self.phone_number.number.send_keys(number)
+    def set_cell_phone_number(self, number):
+        self.cell_phone_number.number.send_keys(number)
+
+    def set_home_phone_number(self, number):
+        self.home_phone_number.number.send_keys(number)
 
     def set_student(self, index, name, grade, birthday, gender):
         student = self.students[index]
         student.name.set_name(name)
         student.grade.select_by_value(grade)
         student.birthday.set_date(birthday)
+        if gender == 'male':
+            student.gender.set_male()
+        else:
+            assert gender == 'female'
+            student.gender.set_female()
+
+    def set_camper(self, index, name, age, tshirt, gender):
+        student = self.students[index]
+        student.name.set_name(name)
+        student.age.select_by_value(age)
+        student.tshirt.select_by_value(tshirt)
         if gender == 'male':
             student.gender.set_male()
         else:
