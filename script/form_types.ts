@@ -104,12 +104,14 @@ class Address {
     _city: JQuery;
     _state: JQuery;
     _zipcode: JQuery;
+    _foreign: JQuery;
 
     constructor(obj: JQuery) {
         this._street = obj.find('input[name=street]').assertOne();
         this._city = obj.find('input[name=city]').assertOne();
         this._state = obj.find('select[name=state]').assertOne();
         this._zipcode = obj.find('input[name=zip-code]').assertOne();
+        this._foreign = obj.find('input[name=foreign]').assertOne();
     }
 
     get street(): string {
@@ -128,15 +130,27 @@ class Address {
         return this._zipcode.val().trim();
     }
 
+    get foreign(): boolean {
+        return this._foreign.is(':checked')
+    }
+
     get address(): string {
-        return capitalize_words(this.street) + ', ' + capitalize_words(this.city)
-            + ', ' + this.state + ', ' + this.zipcode;
+        if (this.foreign) {
+            return 'Outside of US';
+        } else {
+            return capitalize_words(this.street) + ', ' + capitalize_words(this.city)
+                + ', ' + this.state + ', ' + this.zipcode;
+        }
     }
 
     check(errors: Error_[]): void {
         resetField(this._street);
         resetField(this._city);
         var $zipErrorField = resetField(this._zipcode);
+
+        if (this.foreign) {
+            return;
+        }
 
         checkRequired(this._street, this.street, 'Street', errors);
         checkRequired(this._city, this.city, 'City', errors);

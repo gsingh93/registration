@@ -98,8 +98,9 @@ mixin full-name(middle)
 mixin address
   .section: ul.inputs.address
     li
-      label Check this if you are from outside the US:
-      input(type='checkbox')
+      label Check this if you are from outside the US and ignore the following fields:
+      input(type='checkbox', name='foreign')
+      .error.red
       br
     +text-field('Street', 'street')
     +text-field('City', 'city')
