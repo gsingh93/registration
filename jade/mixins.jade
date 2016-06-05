@@ -122,4 +122,4 @@ mixin phone-number(type)
       - var label = 'Phone number';
     else
       - var label = type + ' phone number';
-    +text-field(label, 'phone-number', 'xxx-xxx-xxxx')
+    +text-field(label, type + '-phone-number', 'xxx-xxx-xxxx')

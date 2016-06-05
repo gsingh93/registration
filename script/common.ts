@@ -81,9 +81,10 @@ class App {
         var address = new Address($('.address').assertOne());
         var email = new Email($('#primary-email').assertOne());
         var secondaryEmail = new Email($('#secondary-email').assertOne());
-        var phoneNumber = new PhoneNumber($('.phone-number').assertOne());
+        var cellPhoneNumber = new PhoneNumber($('.phone-number:eq(0)').assertOne(), 'Cell');
+        var homePhoneNumber = new PhoneNumber($('.phone-number:eq(1)').assertOne(), 'Home');
 
-        // TODO: Type this
+        // TODO: Add a type
         var students = [];
         for (var i = 1; i <= 4; i++) {
             // TODO: This is hacky
@@ -111,7 +112,8 @@ class App {
         if (secondaryEmail.email != '' || secondaryEmail.confirmEmail != '') {
             secondaryEmail.check(errors);
         }
-        phoneNumber.check(errors);
+        cellPhoneNumber.check(errors);
+        homePhoneNumber.check(errors);
 
         // TODO: There may be more errors
         if (errors.length != 0) {
@@ -127,7 +129,8 @@ class App {
                 'address': address.address,
                 'primaryEmail': email.email,
                 'secondaryEmail': secondaryEmail.email,
-                'phoneNumber': phoneNumber.phoneNumber,
+                'cellPhoneNumber': cellPhoneNumber.phoneNumber,
+                'homePhoneNumber': homePhoneNumber.phoneNumber,
                 'name': student.name,
                 'gender': student.gender,
                 'mother': mother.fullName,
