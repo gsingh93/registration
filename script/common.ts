@@ -85,7 +85,8 @@ abstract class App {
         var email = new Email($('#primary-email').assertOne());
         var secondaryEmail = new Email($('#secondary-email').assertOne());
         //var cellPhoneNumber = new PhoneNumber($('.phone-number:eq(0)').assertOne(), 'Cell');
-        var homePhoneNumber = new PhoneNumber($('.phone-number:eq(0)').assertOne(), 'Home');
+        var homePhoneNumber = new PhoneNumber($('.phone-number:eq(0)', undefined)
+                                              .assertOne());
 
         var registrants = [];
         for (var i = 1; i <= 4; i++) {
@@ -127,7 +128,7 @@ abstract class App {
                 'primaryEmail': email.email,
                 'secondaryEmail': secondaryEmail.email,
                 //'cellPhoneNumber': cellPhoneNumber.phoneNumber,
-                'homePhoneNumber': homePhoneNumber.phoneNumber,
+                'phoneNumber': homePhoneNumber.phoneNumber,
                 'name': registrant.name,
                 'gender': registrant.gender,
                 'mother': mother.fullName,

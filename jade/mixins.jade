@@ -120,7 +120,7 @@ mixin phone-number(type)
   .section: ul.inputs.phone-number
     if type === undefined
       - var label = 'Phone number';
-      +text-field(label, type + 'phone-number', 'xxx-xxx-xxxx')
+      +text-field(label, 'phone-number', 'xxx-xxx-xxxx')
     else
       - var label = type + ' phone number';
       +text-field(label, type + '-phone-number', 'xxx-xxx-xxxx')

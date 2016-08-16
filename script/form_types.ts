@@ -208,8 +208,13 @@ class Email {
 class PhoneNumber {
     _number: JQuery;
 
-    constructor(obj: JQuery, type_: string) {
-        this._number = obj.find('input[name=' + type_ + '-phone-number]').assertOne();
+    constructor(obj: JQuery, type_?: string) {
+        if (type_ === undefined) {
+            var class_name = 'phone-number';
+        } else {
+            var class_name = type_ + '-phone-number';
+        }
+        this._number = obj.find('input[name=' + class_name + ']').assertOne();
     }
 
     get phoneNumber(): string {
