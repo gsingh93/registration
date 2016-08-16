@@ -107,35 +107,7 @@ class Camper:
         self.age = Select(assertOne(elt.find_elements_by_css_selector('select[name=age]')))
         # TODO: Skills
 
-
 class Form:
-    def __init__(self, url, driver):
-        driver.get(url)
-
-        self.num_entries = Select(driver.find_element_by_id('numentries'))
-        form = driver.find_element_by_id('form')
-        assert not form.is_displayed()
-
-        self.set_num_entries(1)
-
-        WebDriverWait(driver, 10).until(EC.visibility_of(form))
-
-        assert form.is_displayed()
-        self.fathers_name = FullName(assertOne(form.find_elements_by_id('father-name')))
-        self.mothers_name = FullName(assertOne(form.find_elements_by_id('mother-name')))
-        self.address = Address(assertOne(form.find_elements_by_class_name('address')))
-        self.primary_email = Email(assertOne(form.find_elements_by_id('primary-email')))
-        self.secondary_email = Email(assertOne(form.find_elements_by_id('secondary-email')))
-        self.cell_phone_number = PhoneNumber(form.find_elements_by_class_name('phone-number')[0], 'Cell')
-        self.home_phone_number = PhoneNumber(form.find_elements_by_class_name('phone-number')[1], 'Home')
-
-        self.students = []
-        for i in range(1, 5):
-            #self.students.append(Student(assertOne(form.find_elements_by_id('student-' + str(i)))))
-            self.students.append(Camper(assertOne(form.find_elements_by_id('camper-' + str(i)))))
-
-        self._submit = form.find_element_by_id('submit')
-
     def set_fathers_name(self, name):
         self.fathers_name.set_name(name)
 
@@ -164,7 +136,7 @@ class Form:
         self.cell_phone_number.number.send_keys(number)
 
     def set_home_phone_number(self, number):
-        self.home_phone_number.number.send_keys(number)
+        self.phone_number.number.send_keys(number)
 
     def set_student(self, index, name, grade, birthday, gender):
         student = self.students[index]
@@ -194,3 +166,56 @@ class Form:
 
     def submit(self):
         self._submit.click()
+
+class PclassForm(Form):
+    def __init__(self, url, driver):
+        driver.get(url)
+
+        self.num_entries = Select(driver.find_element_by_id('numentries'))
+        form = driver.find_element_by_id('form')
+        assert not form.is_displayed()
+
+        self.set_num_entries(1)
+
+        WebDriverWait(driver, 10).until(EC.visibility_of(form))
+
+        assert form.is_displayed()
+        self.fathers_name = FullName(assertOne(form.find_elements_by_id('father-name')))
+        self.mothers_name = FullName(assertOne(form.find_elements_by_id('mother-name')))
+        self.address = Address(assertOne(form.find_elements_by_class_name('address')))
+        self.primary_email = Email(assertOne(form.find_elements_by_id('primary-email')))
+        self.secondary_email = Email(assertOne(form.find_elements_by_id('secondary-email')))
+        self.phone_number = PhoneNumber(form.find_elements_by_class_name('phone-number')[0], 'Home')
+
+        self.students = []
+        for i in range(1, 5):
+            self.students.append(Student(assertOne(form.find_elements_by_id('student-' + str(i)))))
+
+        self._submit = form.find_element_by_id('submit')
+
+class CampForm(Form):
+    def __init__(self, url, driver):
+        driver.get(url)
+
+        self.num_entries = Select(driver.find_element_by_id('numentries'))
+        form = driver.find_element_by_id('form')
+        assert not form.is_displayed()
+
+        self.set_num_entries(1)
+
+        WebDriverWait(driver, 10).until(EC.visibility_of(form))
+
+        assert form.is_displayed()
+        self.fathers_name = FullName(assertOne(form.find_elements_by_id('father-name')))
+        self.mothers_name = FullName(assertOne(form.find_elements_by_id('mother-name')))
+        self.address = Address(assertOne(form.find_elements_by_class_name('address')))
+        self.primary_email = Email(assertOne(form.find_elements_by_id('primary-email')))
+        self.secondary_email = Email(assertOne(form.find_elements_by_id('secondary-email')))
+        self.cell_phone_number = PhoneNumber(form.find_elements_by_class_name('phone-number')[0], 'Cell')
+        self.home_phone_number = PhoneNumber(form.find_elements_by_class_name('phone-number')[1], 'Home')
+
+        self.students = []
+        for i in range(1, 5):
+            self.students.append(Camper(assertOne(form.find_elements_by_id('camper-' + str(i)))))
+
+        self._submit = form.find_element_by_id('submit')

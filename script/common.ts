@@ -3,6 +3,7 @@
 /// <reference path="form_types.ts"/>
 
 const successUrl = "success.html";
+declare var firebase: any;
 
 interface JQuery {
     assertOne(): any;
@@ -11,18 +12,20 @@ interface JQuery {
     assertSize(num: number): any;
 }
 
-class App {
+abstract class App {
     private TESTING: boolean = false;
     private successfulSubmissions: number = 0;
     private cost: number;
     private lateCost: number;
 
+    protected abstract get_json_data(registrant: Registrant, jsonData: Object): void;
+    protected abstract create_registrant(id: number): Registrant;
+    protected abstract get_id(): string
+
     constructor(
-        private id: string,
         private url: string,
         private app_id: string,
-        private api_key: string,
-        private get_json_data_func: any // TODO
+        private api_key: string
     ) {
         if (window.location.hash == '#test') {
             this.TESTING = true;
@@ -34,7 +37,7 @@ class App {
         }
         addAssertFunctions();
 
-        this.getStudents().each(function(index, elt) {
+        this.getRegistrants().each(function(index, elt) {
             $(elt).hide();
         });
         $('#form').hide();
@@ -48,12 +51,12 @@ class App {
     private numEntriesChanged($numEntries: JQuery) {
         var val = getNumEntries($numEntries);
 
-        var $students = this.getStudents();
+        var $registrants = this.getRegistrants();
         for (var i = 0; i < 4; i++) {
             if (i < val) {
-                $students.eq(i).fadeIn();
+                $registrants.eq(i).fadeIn();
             } else {
-                $students.eq(i).fadeOut();
+                $registrants.eq(i).fadeOut();
             }
         }
 
@@ -81,27 +84,21 @@ class App {
         var address = new Address($('.address').assertOne());
         var email = new Email($('#primary-email').assertOne());
         var secondaryEmail = new Email($('#secondary-email').assertOne());
-        var cellPhoneNumber = new PhoneNumber($('.phone-number:eq(0)').assertOne(), 'Cell');
-        var homePhoneNumber = new PhoneNumber($('.phone-number:eq(1)').assertOne(), 'Home');
+        //var cellPhoneNumber = new PhoneNumber($('.phone-number:eq(0)').assertOne(), 'Cell');
+        var homePhoneNumber = new PhoneNumber($('.phone-number:eq(0)').assertOne(), 'Home');
 
-        // TODO: Add a type
-        var students = [];
+        var registrants = [];
         for (var i = 1; i <= 4; i++) {
-            // TODO: This is hacky
-            if (this.id === 'student') {
-                students.push(new Student($('#' + this.id + '-' + i).assertOne()));
-            } else {
-                students.push(new Camper($('#' + this.id + '-' + i).assertOne()));
-            }
+            registrants.push(this.create_registrant(i));
         }
-        assert.notEqual(students.length, 0);
+        assert.notEqual(registrants.length, 0);
 
         var errors: Error_[] = [];
 
         var numEntries = getNumEntries();
         assert.notEqual(numEntries, 0);
         for (var i = 0; i < numEntries; i++) {
-            students[i].check(errors);
+            registrants[i].check(errors);
         }
 
         mother.check(errors);
@@ -112,7 +109,7 @@ class App {
         if (secondaryEmail.email != '' || secondaryEmail.confirmEmail != '') {
             secondaryEmail.check(errors);
         }
-        cellPhoneNumber.check(errors);
+        //cellPhoneNumber.check(errors);
         homePhoneNumber.check(errors);
 
         // TODO: There may be more errors
@@ -123,62 +120,52 @@ class App {
         }
 
         for (var i = 0; i < numEntries; i++) {
-            var student = students[i];
+            var registrant = registrants[i];
 
             var jsonData = {
                 'address': address.address,
                 'primaryEmail': email.email,
                 'secondaryEmail': secondaryEmail.email,
-                'cellPhoneNumber': cellPhoneNumber.phoneNumber,
+                //'cellPhoneNumber': cellPhoneNumber.phoneNumber,
                 'homePhoneNumber': homePhoneNumber.phoneNumber,
-                'name': student.name,
-                'gender': student.gender,
+                'name': registrant.name,
+                'gender': registrant.gender,
                 'mother': mother.fullName,
                 'father': father.fullName,
+                'timestamp': Date.now(),
             };
 
-            this.get_json_data_func(student, jsonData);
-
-            var jsonString = JSON.stringify(jsonData);
+            this.get_json_data(registrant, jsonData);
 
             if (this.TESTING) {
-                console.log(jsonString);
+                console.log(jsonData);
                 this.successfulSubmissions++;
                 if (this.successfulSubmissions == numEntries) {
                     window.location.href = successUrl;
                 }
             } else {
-                console.log(jsonString);
-                $.ajax({
-                    url: this.url,
-                    method: 'POST',
-                    data: jsonString,
-                    contentType: 'application/json',
-                    headers: {
-                        "X-Parse-Application-Id": this.app_id,
-                        "X-Parse-REST-API-Key": this.api_key,
-                    },
-                    complete: (response, textStatus) => {
-                        if (response.readyState == XMLHttpRequest.DONE && response.status == 201) {
-                            this.successfulSubmissions++;
-                            if (this.successfulSubmissions == numEntries) {
-                                window.location.href = successUrl;
-                            }
-                        } else {
-                            console.log('Status: ' + response.status.toString());
-                            console.log('Response: ' + response.responseText);
-                            alert('An error occurred, please try again.');
+                console.log(jsonData);
+                var newStudentRef = firebase.database().ref('/students').push();
+                newStudentRef.set(jsonData)
+                    .then((function() {
+                        this.successfulSubmissions++;
+                        if (this.successfulSubmissions == numEntries) {
+                            // TODO: Send email confirmation
+                            window.location.href = successUrl;
                         }
-                    },
-                });
+                    }).bind(this))
+                    .catch(function(error) {
+                        console.log('Error: ' + error);
+                        alert('An error occurred, please try again.');
+                    });
             }
         }
     }
 
-    private getStudents(): JQuery {
-        var $students = $('div[id^=' + this.id + '-]');
-        assert.equal($students.length, 4);
-        return $students;
+    private getRegistrants(): JQuery {
+        var $registrants = $('div[id^=' + this.get_id() + '-]');
+        assert.equal($registrants.length, 4);
+        return $registrants;
     }
 }
 

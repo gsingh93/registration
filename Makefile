@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 YEAR := $(shell date '+%Y')
-PROJECT := camp
+PROJECT := pclass
 
 OUT_DIR := public
 

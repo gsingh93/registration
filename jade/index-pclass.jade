@@ -1,6 +1,6 @@
 include mixins.jade
 
-- var year = 2015;
+- var year = 2016;
 - var cost = 50;
 -
   var links = {
@@ -86,3 +86,13 @@ html
       script(src='assert.js')
       script(src='sprintf.js')
       script(src='main.js')
+      script(src='https://www.gstatic.com/firebasejs/3.2.1/firebase.js')
+      script.
+        // Initialize Firebase
+        var config = {
+          apiKey: "AIzaSyDpBIdaYtvfkTEGsdA32hIyoOCjDL5Apuw",
+          authDomain: "punjabi-class-registration.firebaseapp.com",
+          databaseURL: "https://punjabi-class-registration.firebaseio.com",
+          storageBucket: "punjabi-class-registration.appspot.com",
+        };
+        firebase.initializeApp(config);

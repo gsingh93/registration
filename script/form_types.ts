@@ -266,13 +266,17 @@ class Gender {
     }
 }
 
-class Student {
+abstract class Registrant {
+}
+
+class Student extends Registrant {
     private _name: FullName;
     private _classSelector: JQuery;
     private _birthday: Date_;
     private _gender: Gender;
 
     constructor(obj: JQuery) {
+        super();
         this._name = new FullName(obj.find('.full-name').assertOne());
         this._classSelector = obj.find('select[name=class]').assertOne();
         this._birthday = new Date_(obj.find('.date').assertOne());
@@ -312,7 +316,7 @@ class Student {
     }
 }
 
-class Camper {
+class Camper extends Registrant {
     private _name: FullName;
     private _tShirtSelector: JQuery;
     private _age: JQuery;
@@ -320,6 +324,7 @@ class Camper {
     private _skills: JQuery;
 
     constructor(obj: JQuery) {
+        super();
         this._name = new FullName(obj.find('.full-name').assertOne());
         this._tShirtSelector = obj.find('select[name=tshirt]').assertOne();
         this._age = obj.find('.number').assertOne();

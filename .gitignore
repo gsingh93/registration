@@ -2,3 +2,4 @@
 bower_components
 *.pyc
 /script/typings
+*.yaml
