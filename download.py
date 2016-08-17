@@ -49,6 +49,7 @@ def main():
             amount,
             payment,
         ])
+    raw_input('press any key to quit')
 
 if __name__ == '__main__':
     main()
